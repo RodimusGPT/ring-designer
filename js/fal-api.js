@@ -1,58 +1,47 @@
-// fal.ai API Integration for nano-banana-pro (Imagen 3)
+// Ring Designer API Client
+// Calls our secure backend (which calls fal.ai)
 const FalAPI = {
     /**
-     * Generate a ring image using fal.ai's nano-banana-pro model
+     * Generate a ring image via our secure backend
      * @param {string} description - User's ring description
      * @returns {Promise<object>} - Generated image data
      */
     async generateRingImage(description) {
-        const apiKey = CONFIG.FAL_API.apiKey;
+        const apiUrl = CONFIG.API_URL;
 
-        // Validate API key
-        if (!apiKey || apiKey === 'YOUR_FAL_API_KEY_HERE') {
-            throw new Error('Please configure your fal.ai API key in config.js');
+        // Validate API URL is configured
+        if (!apiUrl || apiUrl === 'YOUR_RENDER_URL') {
+            throw new Error('Backend API not configured. Please set API_URL in config.js');
         }
 
-        // Build the full prompt with prefix and suffix
-        const fullPrompt = `${CONFIG.FAL_API.promptPrefix}${description}${CONFIG.FAL_API.promptSuffix}`;
-
-        console.log('Generating ring with prompt:', fullPrompt);
+        console.log('Sending to backend:', description.substring(0, 50) + '...');
 
         try {
-            const response = await fetch(CONFIG.FAL_API.endpoint, {
+            const response = await fetch(`${apiUrl}/api/generate-ring`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Key ${apiKey}`
                 },
-                body: JSON.stringify({
-                    prompt: fullPrompt,
-                    image_size: CONFIG.FAL_API.imageSize,
-                    num_inference_steps: CONFIG.FAL_API.numInferenceSteps,
-                    guidance_scale: CONFIG.FAL_API.guidanceScale,
-                    num_images: 1,
-                    enable_safety_checker: true
-                })
+                body: JSON.stringify({ prompt: description })
             });
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.message || `API request failed: ${response.status}`);
+                throw new Error(errorData.error || `API request failed: ${response.status}`);
             }
 
             const result = await response.json();
-            console.log('Generation successful:', result);
+            console.log('Generation successful!');
 
-            // fal.ai nano-banana-pro returns images in the 'images' array
-            if (result.images && result.images.length > 0) {
+            if (result.success && result.imageUrl) {
                 return {
                     success: true,
-                    imageUrl: result.images[0].url,
-                    prompt: fullPrompt,
+                    imageUrl: result.imageUrl,
+                    prompt: result.prompt,
                     description: description
                 };
             } else {
-                throw new Error('No image generated');
+                throw new Error(result.error || 'No image generated');
             }
 
         } catch (error) {

@@ -1,29 +1,17 @@
 // Configuration for the Ring Designer App
 const CONFIG = {
     // =============================================
-    // FIREBASE Configuration (Cloud Database)
+    // BACKEND API URL (Render.com)
+    // This is where the secure backend runs - API key is stored there
+    // =============================================
+    API_URL: 'YOUR_RENDER_URL',  // e.g., 'https://ring-designer-api.onrender.com'
+
+    // =============================================
+    // FIREBASE Configuration (Cloud Database - Optional)
     // Get this from: console.firebase.google.com → Project Settings
     // =============================================
     FIREBASE: {
         projectId: 'YOUR_PROJECT_ID',  // e.g., 'ring-designer-12345'
-    },
-
-    // =============================================
-    // FAL.AI Configuration (AI Image Generation)
-    // Get your key from: https://fal.ai/dashboard/keys
-    // =============================================
-    FAL_API: {
-        endpoint: 'https://fal.run/fal-ai/nano-banana-pro',
-        apiKey: 'YOUR_FAL_API_KEY_HERE',
-
-        // Prompt engineering settings
-        promptPrefix: 'A beautiful engagement ring: ',
-        promptSuffix: ', professional jewelry photography, white background, high detail, 4K, studio lighting',
-
-        // Image generation settings
-        imageSize: '1024x1024',
-        numInferenceSteps: 28,
-        guidanceScale: 3.5,
     },
 
     // Example prompts for inspiration
