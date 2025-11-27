@@ -4,7 +4,7 @@ const CONFIG = {
     // BACKEND API URL (Render.com)
     // This is where the secure backend runs - API key is stored there
     // =============================================
-    API_URL: 'YOUR_RENDER_URL',  // e.g., 'https://ring-designer-api.onrender.com'
+    API_URL: 'https://ring-designer-api.onrender.com',
 
     // =============================================
     // FIREBASE Configuration (Cloud Database - Optional)
