@@ -1,15 +1,28 @@
 /* ========================================
    Design Tokens & Variables
+   Lilly Pulitzer Inspired Palette
    ======================================== */
 :root {
-    /* Colors */
-    --rose-gold: #D4AF7A;
-    --ivory: #FFFEF7;
+    /* Colors - Lilly Pulitzer Aesthetic */
+    --pink-paradise: #FF6B9D;
+    --hot-pink: #E91E8C;
+    --turquoise: #40E0D0;
+    --coral: #FF7F7F;
+    --lime-splash: #98FB98;
+    --sunny-gold: #FFD700;
+    --palm-green: #2E8B57;
+    --white: #FFFFFF;
+    --soft-pink: #FFF0F5;
     --charcoal: #2C2C2C;
-    --blush: #F8E8E8;
-    --accent: #C9A063;
-    --error: #D88C8C;
-    --success: #8CC9A0;
+
+    /* Semantic Colors */
+    --primary: var(--hot-pink);
+    --secondary: var(--turquoise);
+    --accent: var(--coral);
+    --background: var(--soft-pink);
+    --card-bg: var(--white);
+    --error: #FF6B6B;
+    --success: var(--palm-green);
 
     /* Typography */
     --font-heading: 'Playfair Display', serif;
@@ -52,7 +65,7 @@ body {
     font-size: 16px;
     line-height: 1.6;
     color: var(--charcoal);
-    background-color: var(--ivory);
+    background-color: var(--background);
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -86,7 +99,7 @@ img {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(255, 254, 247, 0.95);
+    background: rgba(255, 240, 245, 0.95);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -103,8 +116,8 @@ img {
 .loading-spinner {
     width: 50px;
     height: 50px;
-    border: 4px solid var(--blush);
-    border-top-color: var(--rose-gold);
+    border: 4px solid var(--pink-paradise);
+    border-top-color: var(--hot-pink);
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
@@ -179,14 +192,17 @@ img {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--rose-gold), var(--accent));
+    background: linear-gradient(135deg, var(--hot-pink), var(--pink-paradise));
     color: white;
     box-shadow: var(--shadow-sm);
+    font-weight: 600;
+    letter-spacing: 0.5px;
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
+    background: linear-gradient(135deg, var(--pink-paradise), var(--hot-pink));
 }
 
 .btn-primary:active {
@@ -194,18 +210,19 @@ img {
 }
 
 .btn-secondary {
-    background: var(--blush);
-    color: var(--charcoal);
+    background: var(--turquoise);
+    color: var(--white);
+    font-weight: 500;
 }
 
 .btn-secondary:hover {
-    background: #edd8d8;
+    background: #2BC5B4;
     transform: translateY(-1px);
 }
 
 .btn-back {
     background: transparent;
-    color: var(--rose-gold);
+    color: var(--hot-pink);
     padding: 0.5rem 1rem;
     font-size: 1rem;
     margin-bottom: var(--spacing-md);
@@ -213,7 +230,7 @@ img {
 }
 
 .btn-back:hover {
-    color: var(--accent);
+    color: var(--pink-paradise);
 }
 
 /* ========================================
@@ -221,7 +238,7 @@ img {
    ======================================== */
 #landingScreen {
     position: relative;
-    background: linear-gradient(135deg, var(--ivory) 0%, var(--blush) 100%);
+    background: linear-gradient(135deg, var(--white) 0%, var(--soft-pink) 50%, rgba(64, 224, 208, 0.1) 100%);
     overflow: hidden;
 }
 
@@ -245,9 +262,9 @@ img {
 .landing-title {
     font-size: 4rem;
     font-weight: 700;
-    color: var(--rose-gold);
+    color: var(--hot-pink);
     margin-bottom: var(--spacing-md);
-    text-shadow: 2px 2px 4px rgba(212, 175, 122, 0.1);
+    text-shadow: 2px 2px 4px rgba(233, 30, 140, 0.15);
 }
 
 .landing-subtitle {
@@ -285,8 +302,12 @@ img {
     width: 300px;
     height: 300px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(212, 175, 122, 0.1), transparent);
+    background: radial-gradient(circle, rgba(233, 30, 140, 0.08), transparent);
     animation: float 20s infinite ease-in-out;
+}
+
+.landing-particles::after {
+    background: radial-gradient(circle, rgba(64, 224, 208, 0.08), transparent);
 }
 
 .landing-particles::before {
@@ -348,18 +369,20 @@ img {
 }
 
 .choice-card {
-    background: white;
+    background: var(--white);
     padding: var(--spacing-xl);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
     text-align: center;
     transition: all var(--transition);
     cursor: pointer;
+    border: 2px solid transparent;
 }
 
 .choice-card:hover {
     transform: translateY(-8px);
     box-shadow: var(--shadow-lg);
+    border-color: var(--pink-paradise);
 }
 
 .choice-icon {
@@ -390,24 +413,26 @@ img {
 }
 
 .ring-card {
-    background: white;
+    background: var(--white);
     border-radius: var(--radius-md);
     overflow: hidden;
     box-shadow: var(--shadow-sm);
     transition: all var(--transition);
     cursor: pointer;
+    border: 2px solid transparent;
 }
 
 .ring-card:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-md);
+    border-color: var(--turquoise);
 }
 
 .ring-card-image {
     width: 100%;
     height: 300px;
     object-fit: cover;
-    background: var(--blush);
+    background: var(--soft-pink);
 }
 
 .ring-card-content {
@@ -418,6 +443,32 @@ img {
     font-size: 1.2rem;
     margin-bottom: var(--spacing-xs);
     color: var(--charcoal);
+}
+
+.ring-card-tags {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.ring-tag {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ring-tag.diamond {
+    background: var(--pink-paradise);
+    color: white;
+}
+
+.ring-tag.metal {
+    background: var(--turquoise);
+    color: white;
 }
 
 .ring-card-description {
@@ -452,17 +503,19 @@ img {
 .designer-form textarea {
     width: 100%;
     padding: var(--spacing-md);
-    border: 2px solid var(--blush);
+    border: 2px solid var(--pink-paradise);
     border-radius: var(--radius-md);
     font-family: var(--font-body);
     font-size: 1rem;
     resize: vertical;
     transition: border-color var(--transition);
+    background: var(--white);
 }
 
 .designer-form textarea:focus {
     outline: none;
-    border-color: var(--rose-gold);
+    border-color: var(--hot-pink);
+    box-shadow: 0 0 0 3px rgba(233, 30, 140, 0.1);
 }
 
 .char-counter {
@@ -491,20 +544,205 @@ img {
 
 .chip {
     padding: 0.5rem 1rem;
-    background: var(--blush);
+    background: var(--turquoise);
     border-radius: 20px;
     font-size: 0.85rem;
-    color: var(--charcoal);
+    color: var(--white);
     transition: all var(--transition);
+    font-weight: 500;
 }
 
 .chip:hover {
-    background: var(--rose-gold);
+    background: var(--hot-pink);
+    color: white;
+    transform: scale(1.05);
+}
+
+/* ========================================
+   Ring Guide
+   ======================================== */
+.ring-guide-toggle {
+    text-align: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.btn-guide {
+    background: var(--white);
+    border: 2px solid var(--turquoise);
+    color: var(--turquoise);
+    padding: 0.5rem 1.5rem;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all var(--transition);
+}
+
+.btn-guide:hover {
+    background: var(--turquoise);
     color: white;
 }
 
+.ring-guide {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+    border: 2px solid var(--pink-paradise);
+}
+
+.guide-section {
+    margin-bottom: var(--spacing-md);
+}
+
+.guide-section:last-child {
+    margin-bottom: 0;
+}
+
+.guide-section h4 {
+    color: var(--hot-pink);
+    margin-bottom: var(--spacing-sm);
+    font-size: 0.9rem;
+}
+
+.guide-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.guide-chip {
+    padding: 0.3rem 0.8rem;
+    background: var(--soft-pink);
+    border: 1px solid var(--pink-paradise);
+    border-radius: 15px;
+    font-size: 0.75rem;
+    color: var(--charcoal);
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.guide-chip:hover {
+    background: var(--pink-paradise);
+    color: white;
+}
+
+/* ========================================
+   Design Conversation
+   ======================================== */
+.design-conversation {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.initial-prompt {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    box-shadow: var(--shadow-md);
+}
+
+.conversation-history {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.conversation-message {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.message-prompt {
+    background: var(--turquoise);
+    color: white;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-md);
+    border-bottom-right-radius: 4px;
+    align-self: flex-end;
+    max-width: 80%;
+    font-size: 0.95rem;
+}
+
+.message-image {
+    background: var(--white);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    border: 3px solid var(--pink-paradise);
+}
+
+.message-image img {
+    width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+    border-radius: var(--radius-sm);
+}
+
+.message-iteration {
+    font-size: 0.75rem;
+    color: #999;
+    text-align: center;
+}
+
+/* Refinement Input */
+.refinement-input {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-md);
+    border-top: 4px solid var(--hot-pink);
+}
+
+.refinement-form {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.refinement-form input {
+    flex: 1;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 2px solid var(--pink-paradise);
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    font-family: var(--font-body);
+}
+
+.refinement-form input:focus {
+    outline: none;
+    border-color: var(--hot-pink);
+}
+
+.btn-refine {
+    min-width: auto;
+    padding: var(--spacing-sm) var(--spacing-lg);
+}
+
+.refinement-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-reset {
+    background: transparent;
+    color: #999;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    transition: color var(--transition);
+}
+
+.btn-reset:hover {
+    color: var(--hot-pink);
+}
+
+/* Legacy preview styles (kept for compatibility) */
 .designer-preview {
-    background: white;
+    background: var(--white);
     border-radius: var(--radius-md);
     padding: var(--spacing-lg);
     box-shadow: var(--shadow-sm);
@@ -512,6 +750,7 @@ img {
     align-items: center;
     justify-content: center;
     min-height: 400px;
+    border: 2px dashed var(--pink-paradise);
 }
 
 .preview-placeholder {
@@ -534,11 +773,12 @@ img {
 }
 
 .preview-image-container {
-    background: white;
+    background: var(--white);
     padding: var(--spacing-xl);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
     margin-bottom: var(--spacing-xl);
+    border: 3px solid var(--turquoise);
 }
 
 .preview-image-container img {
@@ -596,7 +836,7 @@ img {
 .thankyou-title {
     font-size: 2.5rem;
     margin-bottom: var(--spacing-md);
-    color: var(--rose-gold);
+    color: var(--hot-pink);
 }
 
 .thankyou-message {
@@ -607,11 +847,12 @@ img {
 }
 
 .thankyou-ring-preview {
-    background: white;
+    background: var(--white);
     padding: var(--spacing-xl);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
     margin-bottom: var(--spacing-xl);
+    border: 3px solid var(--pink-paradise);
 }
 
 .thankyou-ring-preview img {
@@ -628,7 +869,7 @@ img {
 .signature {
     font-family: var(--font-heading);
     font-size: 1.3rem;
-    color: var(--rose-gold);
+    color: var(--hot-pink);
     font-weight: 600;
 }
 

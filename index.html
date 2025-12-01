@@ -72,43 +72,90 @@
         </div>
     </section>
 
-    <!-- Screen 4: AI Designer (Design Path) -->
+    <!-- Screen 4: AI Designer (Design Path) - Conversation Style -->
     <section id="designerScreen" class="screen">
         <div class="container">
             <button class="btn-back" onclick="app.showScreen('choiceScreen')">← Back</button>
             <h2 class="screen-title">Design Your Dream Ring</h2>
-            <p class="screen-subtitle">Describe your perfect ring in words, and AI will create it for you</p>
+            <p class="screen-subtitle">Describe your perfect engagement ring and refine it through conversation</p>
 
-            <div class="designer-content">
-                <div class="designer-form">
-                    <label for="ringDescription">Tell us about your dream ring:</label>
-                    <textarea
-                        id="ringDescription"
-                        placeholder="For example: A delicate rose gold band with a round diamond surrounded by small sapphires, vintage-inspired with milgrain details..."
-                        maxlength="500"
-                        rows="6"
-                    ></textarea>
-                    <div class="char-counter">
-                        <span id="charCount">0</span> / 500 characters
-                    </div>
+            <!-- Ring Guide Helper -->
+            <div class="ring-guide-toggle">
+                <button class="btn-guide" onclick="app.toggleGuide()">
+                    💎 Ring Terminology Guide
+                </button>
+            </div>
+            <div class="ring-guide" id="ringGuide" style="display: none;">
+                <div class="guide-section">
+                    <h4>Diamond Shapes</h4>
+                    <div class="guide-chips" id="guideShapes"></div>
+                </div>
+                <div class="guide-section">
+                    <h4>Settings</h4>
+                    <div class="guide-chips" id="guideSettings"></div>
+                </div>
+                <div class="guide-section">
+                    <h4>Metals</h4>
+                    <div class="guide-chips" id="guideMetals"></div>
+                </div>
+            </div>
 
-                    <div class="example-prompts">
-                        <p class="example-label">Need inspiration? Try these:</p>
-                        <div class="prompt-chips">
-                            <button class="chip" onclick="app.fillExample(0)">Classic Solitaire</button>
-                            <button class="chip" onclick="app.fillExample(1)">Vintage Romance</button>
-                            <button class="chip" onclick="app.fillExample(2)">Modern Elegance</button>
+            <!-- Conversation Container -->
+            <div class="design-conversation" id="designConversation">
+                <!-- Initial prompt area (shown when no designs yet) -->
+                <div class="initial-prompt" id="initialPrompt">
+                    <div class="designer-form">
+                        <label for="ringDescription">Describe your dream engagement ring:</label>
+                        <textarea
+                            id="ringDescription"
+                            placeholder="Example: A round brilliant diamond solitaire on a thin platinum band with a hidden halo underneath..."
+                            maxlength="500"
+                            rows="4"
+                        ></textarea>
+                        <div class="char-counter">
+                            <span id="charCount">0</span> / 500 characters
                         </div>
-                    </div>
 
-                    <button class="btn btn-primary" onclick="app.generateRing()" id="generateBtn">
-                        Generate My Ring ✨
-                    </button>
+                        <div class="example-prompts">
+                            <p class="example-label">Quick start ideas:</p>
+                            <div class="prompt-chips">
+                                <button class="chip" onclick="app.fillExample(0)">Round Solitaire</button>
+                                <button class="chip" onclick="app.fillExample(1)">Oval Halo</button>
+                                <button class="chip" onclick="app.fillExample(2)">Vintage Art Deco</button>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" onclick="app.generateRing()" id="generateBtn">
+                            Create My Ring ✨
+                        </button>
+                    </div>
                 </div>
 
-                <div class="designer-preview" id="designerPreview">
-                    <div class="preview-placeholder">
-                        <p>Your custom ring design will appear here</p>
+                <!-- Conversation History (shown after first generation) -->
+                <div class="conversation-history" id="conversationHistory" style="display: none;">
+                    <!-- Messages will be inserted here -->
+                </div>
+
+                <!-- Refinement Input (shown after first generation) -->
+                <div class="refinement-input" id="refinementInput" style="display: none;">
+                    <div class="refinement-form">
+                        <input
+                            type="text"
+                            id="refinementText"
+                            placeholder="Refine your design: 'make the band thinner' or 'add sapphire side stones'..."
+                            maxlength="200"
+                        >
+                        <button class="btn btn-primary btn-refine" onclick="app.refineDesign()">
+                            Refine ✨
+                        </button>
+                    </div>
+                    <div class="refinement-actions">
+                        <button class="btn btn-secondary" onclick="app.selectCurrentDesign()">
+                            I Love This! 💕
+                        </button>
+                        <button class="btn-reset" onclick="app.startOver()">
+                            Start Over
+                        </button>
                     </div>
                 </div>
             </div>

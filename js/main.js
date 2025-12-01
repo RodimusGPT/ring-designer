@@ -4,11 +4,18 @@ const app = {
     currentDesign: null,
     previousScreen: null,
 
+    // Conversation state for iterative design
+    conversation: {
+        history: [],      // Array of {prompt, imageUrl, iteration}
+        currentImage: null,
+        iteration: 0
+    },
+
     /**
      * Initialize the application
      */
     init() {
-        console.log('🎀 Ring Designer App initialized for Maria');
+        console.log('💎 Maria\'s Ring Designer initialized');
 
         // Load gallery rings
         this.loadGallery();
@@ -16,11 +23,82 @@ const app = {
         // Setup text area character counter
         this.setupCharCounter();
 
+        // Setup ring terminology guide
+        this.setupRingGuide();
+
         // Check if there's a saved design
         this.checkSavedDesign();
 
         // Show landing screen
         this.showScreen('landingScreen');
+    },
+
+    /**
+     * Setup ring terminology guide with clickable chips
+     */
+    setupRingGuide() {
+        if (!CONFIG.RING_GUIDE) return;
+
+        const guide = CONFIG.RING_GUIDE;
+
+        // Populate diamond shapes
+        const shapesContainer = document.getElementById('guideShapes');
+        if (shapesContainer && guide.diamondShapes) {
+            shapesContainer.innerHTML = guide.diamondShapes.map(item =>
+                `<button class="guide-chip" onclick="app.insertTerm('${item.name}')" title="${item.desc}">${item.name}</button>`
+            ).join('');
+        }
+
+        // Populate settings
+        const settingsContainer = document.getElementById('guideSettings');
+        if (settingsContainer && guide.settings) {
+            settingsContainer.innerHTML = guide.settings.map(item =>
+                `<button class="guide-chip" onclick="app.insertTerm('${item.name}')" title="${item.desc}">${item.name}</button>`
+            ).join('');
+        }
+
+        // Populate metals
+        const metalsContainer = document.getElementById('guideMetals');
+        if (metalsContainer && guide.metals) {
+            metalsContainer.innerHTML = guide.metals.map(item =>
+                `<button class="guide-chip" onclick="app.insertTerm('${item.name}')" title="${item.desc}">${item.name}</button>`
+            ).join('');
+        }
+    },
+
+    /**
+     * Toggle ring guide visibility
+     */
+    toggleGuide() {
+        const guide = document.getElementById('ringGuide');
+        if (guide) {
+            guide.style.display = guide.style.display === 'none' ? 'block' : 'none';
+        }
+    },
+
+    /**
+     * Insert term into active input field
+     */
+    insertTerm(term) {
+        const textarea = document.getElementById('ringDescription');
+        const refinementInput = document.getElementById('refinementText');
+
+        // Determine which field is active or visible
+        const activeField = refinementInput && refinementInput.offsetParent !== null
+            ? refinementInput
+            : textarea;
+
+        if (activeField) {
+            const currentValue = activeField.value;
+            const separator = currentValue.length > 0 && !currentValue.endsWith(' ') ? ', ' : '';
+            activeField.value = currentValue + separator + term.toLowerCase();
+            activeField.focus();
+
+            // Update char counter if textarea
+            if (activeField === textarea) {
+                document.getElementById('charCount').textContent = activeField.value.length;
+            }
+        }
     },
 
     /**
@@ -78,7 +156,7 @@ const app = {
     },
 
     /**
-     * Create a ring card element
+     * Create a ring card element with diamond/style metadata
      */
     createRingCard(ring) {
         const card = document.createElement('div');
@@ -92,6 +170,10 @@ const app = {
             >
             <div class="ring-card-content">
                 <h3 class="ring-card-title">${ring.title}</h3>
+                <div class="ring-card-tags">
+                    <span class="ring-tag diamond">${ring.diamond || 'Diamond'}</span>
+                    <span class="ring-tag metal">${ring.metal || 'Platinum'}</span>
+                </div>
                 <p class="ring-card-description">${ring.description}</p>
                 <button class="btn btn-secondary" onclick="app.selectGalleryRing(${ring.id})">
                     Select This Design
@@ -149,7 +231,7 @@ const app = {
     },
 
     /**
-     * Generate ring using AI
+     * Generate ring using AI (initial generation)
      */
     async generateRing() {
         const textarea = document.getElementById('ringDescription');
@@ -170,24 +252,32 @@ const app = {
             const result = await FalAPI.generateRingImage(description);
 
             if (result.success) {
-                console.log('Ring generated successfully');
+                console.log('💎 Ring generated successfully');
 
-                // Store the design
+                // Reset conversation and start fresh
+                this.conversation.history = [];
+                this.conversation.iteration = 1;
+                this.conversation.currentImage = result.imageUrl;
+
+                // Add to conversation history
+                this.conversation.history.push({
+                    prompt: description,
+                    imageUrl: result.imageUrl,
+                    iteration: 1
+                });
+
+                // Store as current design
                 this.currentDesign = {
                     type: 'custom',
                     imageUrl: result.imageUrl,
                     description: description,
                     prompt: result.prompt,
-                    title: 'Your Custom Design'
+                    title: 'Your Custom Design',
+                    conversationHistory: [...this.conversation.history]
                 };
 
-                // Show preview in designer
-                this.showDesignerPreview(result.imageUrl);
-
-                // Optionally navigate to preview screen after a moment
-                setTimeout(() => {
-                    this.showPreview();
-                }, 1500);
+                // Switch to conversation mode
+                this.showConversationMode();
 
             } else {
                 throw new Error(result.error || 'Generation failed');
@@ -202,13 +292,133 @@ const app = {
     },
 
     /**
-     * Show generated ring in designer preview area
+     * Refine the current design with additional instructions
      */
-    showDesignerPreview(imageUrl) {
-        const previewContainer = document.getElementById('designerPreview');
-        previewContainer.innerHTML = `
-            <img src="${imageUrl}" alt="Your custom ring design">
-        `;
+    async refineDesign() {
+        const refinementInput = document.getElementById('refinementText');
+        const refinement = refinementInput.value.trim();
+
+        if (!refinement) {
+            alert('Please describe how you\'d like to refine the design.');
+            return;
+        }
+
+        if (!this.conversation.currentImage) {
+            alert('No current design to refine. Please generate a design first.');
+            return;
+        }
+
+        // Show loading
+        this.showLoading(true);
+
+        try {
+            // Build the full context prompt including previous design
+            const previousPrompts = this.conversation.history.map(h => h.prompt).join('. ');
+            const fullPrompt = `Based on this engagement ring design: "${previousPrompts}". Now make this modification: ${refinement}`;
+
+            // Generate refined version
+            const result = await FalAPI.generateRingImage(fullPrompt, this.conversation.currentImage);
+
+            if (result.success) {
+                console.log('💎 Design refined successfully');
+
+                // Update conversation
+                this.conversation.iteration++;
+                this.conversation.currentImage = result.imageUrl;
+
+                // Add to history
+                this.conversation.history.push({
+                    prompt: refinement,
+                    imageUrl: result.imageUrl,
+                    iteration: this.conversation.iteration
+                });
+
+                // Update current design
+                this.currentDesign.imageUrl = result.imageUrl;
+                this.currentDesign.description += ` | Refinement: ${refinement}`;
+                this.currentDesign.conversationHistory = [...this.conversation.history];
+
+                // Update the conversation display
+                this.updateConversationDisplay();
+
+                // Clear refinement input
+                refinementInput.value = '';
+
+            } else {
+                throw new Error(result.error || 'Refinement failed');
+            }
+
+        } catch (error) {
+            console.error('Refinement error:', error);
+            alert(`Sorry, couldn't refine the design: ${error.message}. Please try again.`);
+        } finally {
+            this.showLoading(false);
+        }
+    },
+
+    /**
+     * Switch UI to conversation mode after first generation
+     */
+    showConversationMode() {
+        // Hide initial prompt
+        document.getElementById('initialPrompt').style.display = 'none';
+
+        // Show conversation history and refinement input
+        document.getElementById('conversationHistory').style.display = 'flex';
+        document.getElementById('refinementInput').style.display = 'block';
+
+        // Update the display
+        this.updateConversationDisplay();
+    },
+
+    /**
+     * Update the conversation display with all history
+     */
+    updateConversationDisplay() {
+        const container = document.getElementById('conversationHistory');
+
+        container.innerHTML = this.conversation.history.map((item, index) => `
+            <div class="conversation-message">
+                <div class="message-prompt">${item.prompt}</div>
+                <div class="message-image">
+                    <img src="${item.imageUrl}" alt="Design iteration ${item.iteration}">
+                </div>
+                <div class="message-iteration">Version ${item.iteration}${index === this.conversation.history.length - 1 ? ' (Current)' : ''}</div>
+            </div>
+        `).join('');
+
+        // Scroll to bottom
+        container.scrollTop = container.scrollHeight;
+    },
+
+    /**
+     * Select the current design and proceed to preview
+     */
+    selectCurrentDesign() {
+        if (!this.currentDesign) {
+            alert('No design selected yet.');
+            return;
+        }
+        this.showPreview();
+    },
+
+    /**
+     * Start over with a new design
+     */
+    startOver() {
+        // Reset conversation
+        this.conversation.history = [];
+        this.conversation.currentImage = null;
+        this.conversation.iteration = 0;
+        this.currentDesign = null;
+
+        // Reset UI
+        document.getElementById('initialPrompt').style.display = 'block';
+        document.getElementById('conversationHistory').style.display = 'none';
+        document.getElementById('refinementInput').style.display = 'none';
+        document.getElementById('conversationHistory').innerHTML = '';
+        document.getElementById('ringDescription').value = '';
+        document.getElementById('charCount').textContent = '0';
     },
 
     /**

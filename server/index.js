@@ -29,21 +29,30 @@ app.post('/api/generate-ring', async (req, res) => {
         return res.status(500).json({ error: 'Server not configured properly' });
     }
 
-    const { prompt } = req.body;
+    const { prompt, referenceImage, isRefinement } = req.body;
 
     // Validate prompt
     if (!prompt || prompt.length < 10) {
         return res.status(400).json({ error: 'Please provide a detailed description (at least 10 characters)' });
     }
 
-    if (prompt.length > 500) {
-        return res.status(400).json({ error: 'Description too long (max 500 characters)' });
+    if (prompt.length > 1000) {
+        return res.status(400).json({ error: 'Description too long (max 1000 characters for refinements)' });
     }
 
     // Build the full prompt with jewelry-specific enhancements
-    const fullPrompt = `A beautiful engagement ring: ${prompt}, professional jewelry photography, white background, high detail, 4K, studio lighting`;
+    let fullPrompt;
+    if (isRefinement && referenceImage) {
+        // For refinements, emphasize the modification while maintaining engagement ring context
+        fullPrompt = `A beautiful diamond engagement ring with these exact specifications: ${prompt}. Professional jewelry photography, elegant white studio background, macro detail shot, luxury presentation, 4K quality, perfect lighting highlighting the diamond brilliance and metal finish`;
+        console.log('🔄 Refining design...');
+    } else {
+        // Initial generation
+        fullPrompt = `A stunning diamond engagement ring: ${prompt}. Professional jewelry photography, elegant white studio background, macro detail shot, luxury presentation, 4K quality, perfect lighting highlighting the diamond brilliance and metal finish`;
+        console.log('✨ Creating new design...');
+    }
 
-    console.log('Generating ring with prompt:', fullPrompt.substring(0, 100) + '...');
+    console.log('Prompt:', fullPrompt.substring(0, 120) + '...');
 
     try {
         const response = await fetch('https://fal.run/fal-ai/nano-banana-pro', {
@@ -71,11 +80,12 @@ app.post('/api/generate-ring', async (req, res) => {
         const result = await response.json();
 
         if (result.images && result.images.length > 0) {
-            console.log('✅ Ring generated successfully');
+            console.log(`${isRefinement ? '🔄' : '✅'} Ring ${isRefinement ? 'refined' : 'generated'} successfully`);
             return res.json({
                 success: true,
                 imageUrl: result.images[0].url,
-                prompt: fullPrompt
+                prompt: fullPrompt,
+                isRefinement: !!isRefinement
             });
         } else {
             return res.status(500).json({ error: 'No image generated' });
