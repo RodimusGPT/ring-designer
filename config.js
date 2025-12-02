@@ -14,6 +14,47 @@ const CONFIG = {
         projectId: 'ring-b6de2',
     },
 
+    // =============================================
+    // SUPPORTED JEWELRY VENDORS
+    // Top engagement ring and jewelry retailers
+    // =============================================
+    JEWELRY_VENDORS: [
+        // Premium/Luxury Brands
+        { name: 'Tiffany & Co.', domain: 'tiffany.com', logo: '💎', tier: 'luxury' },
+        { name: 'Cartier', domain: 'cartier.com', logo: '👑', tier: 'luxury' },
+        { name: 'Harry Winston', domain: 'harrywinston.com', logo: '✨', tier: 'luxury' },
+        { name: 'Van Cleef & Arpels', domain: 'vancleefarpels.com', logo: '🌸', tier: 'luxury' },
+        { name: 'Graff', domain: 'graff.com', logo: '💠', tier: 'luxury' },
+        { name: 'De Beers', domain: 'debeers.com', logo: '💍', tier: 'luxury' },
+        { name: 'Chopard', domain: 'chopard.com', logo: '⭐', tier: 'luxury' },
+        { name: 'Bvlgari', domain: 'bulgari.com', logo: '🔶', tier: 'luxury' },
+
+        // Online Diamond Specialists
+        { name: 'Blue Nile', domain: 'bluenile.com', logo: '🌊', tier: 'specialist' },
+        { name: 'James Allen', domain: 'jamesallen.com', logo: '🔍', tier: 'specialist' },
+        { name: 'Brilliant Earth', domain: 'brilliantearth.com', logo: '🌍', tier: 'specialist' },
+        { name: 'Ritani', domain: 'ritani.com', logo: '💫', tier: 'specialist' },
+        { name: 'Whiteflash', domain: 'whiteflash.com', logo: '⚡', tier: 'specialist' },
+        { name: 'Adiamor', domain: 'adiamor.com', logo: '💎', tier: 'specialist' },
+        { name: 'With Clarity', domain: 'withclarity.com', logo: '🔮', tier: 'specialist' },
+        { name: 'Vrai', domain: 'vrai.com', logo: '🌱', tier: 'specialist' },
+        { name: 'Clean Origin', domain: 'cleanorigin.com', logo: '♻️', tier: 'specialist' },
+
+        // Major Retail Chains
+        { name: 'Kay Jewelers', domain: 'kay.com', logo: '❤️', tier: 'retail' },
+        { name: 'Zales', domain: 'zales.com', logo: '💝', tier: 'retail' },
+        { name: 'Jared', domain: 'jared.com', logo: '💒', tier: 'retail' },
+        { name: 'Helzberg Diamonds', domain: 'helzberg.com', logo: '🎁', tier: 'retail' },
+        { name: 'Shane Co.', domain: 'shaneco.com', logo: '🏠', tier: 'retail' },
+
+        // Specialty & Designer
+        { name: 'Tacori', domain: 'tacori.com', logo: '🎀', tier: 'designer' },
+        { name: 'Verragio', domain: 'verragio.com', logo: '🌹', tier: 'designer' },
+        { name: 'Simon G.', domain: 'simongjewelry.com', logo: '🎨', tier: 'designer' },
+        { name: 'Hearts on Fire', domain: 'heartsonfire.com', logo: '🔥', tier: 'designer' },
+        { name: 'Charles & Colvard', domain: 'charlesandcolvard.com', logo: '✦', tier: 'designer' },
+    ],
+
     // Example prompts for inspiration - Engagement Ring focused
     EXAMPLE_PROMPTS: [
         'Round brilliant solitaire on a thin platinum band with a hidden halo of tiny diamonds underneath the center stone',

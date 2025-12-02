@@ -61,6 +61,89 @@
 
                 <!-- Form Panel -->
                 <div class="designer-form-panel">
+                    <!-- URL Import Section -->
+                    <div class="url-import-section" id="urlImportSection">
+                        <div class="import-header">
+                            <h3 class="import-title">Import from Your Favorite Jeweler</h3>
+                            <p class="import-subtitle">Found a ring you love? Paste the URL and we'll import it!</p>
+                        </div>
+
+                        <div class="vendor-showcase">
+                            <div class="vendor-logos" id="vendorLogos">
+                                <!-- Populated by JavaScript -->
+                            </div>
+                            <button class="btn-show-all-vendors" onclick="app.toggleVendorList()">
+                                See all supported stores
+                            </button>
+                        </div>
+
+                        <div class="url-input-container">
+                            <div class="url-input-wrapper">
+                                <span class="url-icon">🔗</span>
+                                <input
+                                    type="url"
+                                    id="ringUrlInput"
+                                    placeholder="Paste ring URL from Tiffany, Blue Nile, James Allen..."
+                                    autocomplete="off"
+                                >
+                                <button class="btn-import" onclick="app.importFromUrl()" id="importBtn">
+                                    Import
+                                </button>
+                            </div>
+                            <div class="url-status" id="urlStatus"></div>
+                        </div>
+
+                        <!-- Expanded Vendor List (hidden by default) -->
+                        <div class="vendor-list-expanded" id="vendorListExpanded" style="display: none;">
+                            <div class="vendor-category" id="vendorLuxury">
+                                <h4>Luxury Brands</h4>
+                                <div class="vendor-grid"></div>
+                            </div>
+                            <div class="vendor-category" id="vendorSpecialist">
+                                <h4>Diamond Specialists</h4>
+                                <div class="vendor-grid"></div>
+                            </div>
+                            <div class="vendor-category" id="vendorRetail">
+                                <h4>Major Retailers</h4>
+                                <div class="vendor-grid"></div>
+                            </div>
+                            <div class="vendor-category" id="vendorDesigner">
+                                <h4>Designer Collections</h4>
+                                <div class="vendor-grid"></div>
+                            </div>
+                        </div>
+
+                        <div class="import-divider">
+                            <span>or design your own</span>
+                        </div>
+                    </div>
+
+                    <!-- Imported Ring Preview (hidden initially) -->
+                    <div class="imported-ring-preview" id="importedRingPreview" style="display: none;">
+                        <div class="imported-ring-header">
+                            <span class="imported-vendor-badge" id="importedVendorBadge"></span>
+                            <button class="btn-close-import" onclick="app.clearImport()">×</button>
+                        </div>
+                        <div class="imported-ring-images" id="importedRingImages">
+                            <!-- Images populated by JavaScript -->
+                        </div>
+                        <div class="imported-ring-details">
+                            <h3 id="importedRingTitle">Ring Name</h3>
+                            <p class="imported-ring-price" id="importedRingPrice"></p>
+                            <div class="imported-ring-meta" id="importedRingMeta">
+                                <!-- Metadata populated by JavaScript -->
+                            </div>
+                        </div>
+                        <div class="imported-ring-actions">
+                            <button class="btn btn-primary" onclick="app.selectImportedRing()">
+                                I Love This Ring! 💕
+                            </button>
+                            <button class="btn btn-secondary" onclick="app.useAsInspiration()">
+                                Use as Inspiration
+                            </button>
+                        </div>
+                    </div>
+
                     <!-- Conversation Container -->
                     <div class="design-conversation" id="designConversation">
                         <!-- Initial prompt area (shown when no designs yet) -->

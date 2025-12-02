@@ -1,6 +1,7 @@
 // Ring Designer API - Secure proxy for fal.ai
 const express = require('express');
 const cors = require('cors');
+const cheerio = require('cheerio');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -94,6 +95,413 @@ app.post('/api/generate-ring', async (req, res) => {
     } catch (error) {
         console.error('Generation error:', error);
         return res.status(500).json({ error: 'Failed to generate ring image' });
+    }
+});
+
+// =============================================
+// IMPORT RING FROM URL ENDPOINT
+// Fetches ring details from major jewelry vendors
+// =============================================
+
+// Supported jewelry vendor domains
+const SUPPORTED_VENDORS = [
+    // Luxury
+    'tiffany.com', 'cartier.com', 'harrywinston.com', 'vancleefarpels.com',
+    'graff.com', 'debeers.com', 'chopard.com', 'bulgari.com',
+    // Specialists
+    'bluenile.com', 'jamesallen.com', 'brilliantearth.com', 'ritani.com',
+    'whiteflash.com', 'adiamor.com', 'withclarity.com', 'vrai.com', 'cleanorigin.com',
+    // Retail
+    'kay.com', 'zales.com', 'jared.com', 'helzberg.com', 'shaneco.com',
+    // Designer
+    'tacori.com', 'verragio.com', 'simongjewelry.com', 'heartsonfire.com', 'charlesandcolvard.com'
+];
+
+// Check if URL is from a supported vendor
+function getVendorFromUrl(url) {
+    try {
+        const hostname = new URL(url).hostname.toLowerCase();
+        for (const vendor of SUPPORTED_VENDORS) {
+            if (hostname.includes(vendor.replace('www.', ''))) {
+                return vendor;
+            }
+        }
+        return null;
+    } catch {
+        return null;
+    }
+}
+
+// Extract images from HTML
+function extractImages($, baseUrl) {
+    const images = new Set();
+
+    // 1. Open Graph images (highest priority)
+    $('meta[property="og:image"]').each((_, el) => {
+        const content = $(el).attr('content');
+        if (content) images.add(resolveUrl(content, baseUrl));
+    });
+
+    // 2. Twitter card images
+    $('meta[name="twitter:image"]').each((_, el) => {
+        const content = $(el).attr('content');
+        if (content) images.add(resolveUrl(content, baseUrl));
+    });
+
+    // 3. JSON-LD structured data images
+    $('script[type="application/ld+json"]').each((_, el) => {
+        try {
+            const data = JSON.parse($(el).html());
+            extractJsonLdImages(data, images, baseUrl);
+        } catch (e) {
+            // Ignore parsing errors
+        }
+    });
+
+    // 4. Product gallery images (common patterns)
+    const productImageSelectors = [
+        // Common product image selectors
+        '[data-testid*="product-image"] img',
+        '[class*="product-image"] img',
+        '[class*="gallery"] img',
+        '[class*="carousel"] img',
+        '[class*="pdp-image"] img',
+        '[class*="main-image"] img',
+        '.product-detail img',
+        '.product-gallery img',
+        '#product-images img',
+        '.ring-image img',
+        // Srcset support
+        'picture source',
+        // Data attributes
+        '[data-src]',
+        '[data-zoom-image]',
+        '[data-large-image]'
+    ];
+
+    productImageSelectors.forEach(selector => {
+        $(selector).each((_, el) => {
+            // Check multiple attributes
+            const src = $(el).attr('src') || $(el).attr('data-src') ||
+                       $(el).attr('data-zoom-image') || $(el).attr('data-large-image') ||
+                       $(el).attr('srcset')?.split(',')[0]?.trim()?.split(' ')[0];
+            if (src && isValidImageUrl(src)) {
+                images.add(resolveUrl(src, baseUrl));
+            }
+        });
+    });
+
+    // 5. Any large images on the page (fallback)
+    $('img').each((_, el) => {
+        const src = $(el).attr('src');
+        const width = parseInt($(el).attr('width')) || 0;
+        const height = parseInt($(el).attr('height')) || 0;
+
+        if (src && (width >= 300 || height >= 300 || (!width && !height))) {
+            if (isValidImageUrl(src)) {
+                images.add(resolveUrl(src, baseUrl));
+            }
+        }
+    });
+
+    return Array.from(images).slice(0, 10); // Limit to 10 images
+}
+
+// Extract images from JSON-LD data
+function extractJsonLdImages(data, images, baseUrl) {
+    if (Array.isArray(data)) {
+        data.forEach(item => extractJsonLdImages(item, images, baseUrl));
+        return;
+    }
+
+    if (typeof data !== 'object' || !data) return;
+
+    // Direct image properties
+    if (data.image) {
+        if (typeof data.image === 'string') {
+            images.add(resolveUrl(data.image, baseUrl));
+        } else if (Array.isArray(data.image)) {
+            data.image.forEach(img => {
+                if (typeof img === 'string') images.add(resolveUrl(img, baseUrl));
+                else if (img?.url) images.add(resolveUrl(img.url, baseUrl));
+            });
+        } else if (data.image.url) {
+            images.add(resolveUrl(data.image.url, baseUrl));
+        }
+    }
+
+    // Product-specific
+    if (data['@type'] === 'Product' || data['@type'] === 'Offer') {
+        if (data.image) {
+            const imgArray = Array.isArray(data.image) ? data.image : [data.image];
+            imgArray.forEach(img => {
+                if (typeof img === 'string') images.add(resolveUrl(img, baseUrl));
+            });
+        }
+    }
+
+    // Recurse into nested objects
+    Object.values(data).forEach(value => {
+        if (typeof value === 'object') {
+            extractJsonLdImages(value, images, baseUrl);
+        }
+    });
+}
+
+// Extract metadata from HTML
+function extractMetadata($) {
+    const metadata = {
+        title: null,
+        description: null,
+        price: null,
+        currency: null,
+        brand: null,
+        sku: null,
+        material: null,
+        gemstone: null,
+        setting: null,
+        caratWeight: null,
+        metalType: null,
+        availability: null
+    };
+
+    // Title
+    metadata.title = $('meta[property="og:title"]').attr('content') ||
+                     $('meta[name="twitter:title"]').attr('content') ||
+                     $('h1').first().text().trim() ||
+                     $('title').text().trim();
+
+    // Description
+    metadata.description = $('meta[property="og:description"]').attr('content') ||
+                          $('meta[name="description"]').attr('content') ||
+                          $('[class*="product-description"]').first().text().trim();
+
+    // Price (multiple patterns)
+    const priceSelectors = [
+        '[class*="price"]:not([class*="compare"])',
+        '[data-testid*="price"]',
+        '[itemprop="price"]',
+        '.product-price',
+        '#product-price',
+        'meta[property="product:price:amount"]'
+    ];
+
+    for (const selector of priceSelectors) {
+        const el = $(selector).first();
+        const price = el.attr('content') || el.text().trim();
+        if (price) {
+            const match = price.match(/[\d,]+\.?\d*/);
+            if (match) {
+                metadata.price = match[0].replace(/,/g, '');
+                break;
+            }
+        }
+    }
+
+    // Currency
+    metadata.currency = $('meta[property="product:price:currency"]').attr('content') ||
+                       $('[itemprop="priceCurrency"]').attr('content') || 'USD';
+
+    // Brand
+    metadata.brand = $('meta[property="og:brand"]').attr('content') ||
+                    $('[itemprop="brand"]').text().trim() ||
+                    $('meta[property="og:site_name"]').attr('content');
+
+    // Try to extract from JSON-LD
+    $('script[type="application/ld+json"]').each((_, el) => {
+        try {
+            const data = JSON.parse($(el).html());
+            extractJsonLdMetadata(data, metadata);
+        } catch (e) {
+            // Ignore
+        }
+    });
+
+    // Extract ring-specific details from description
+    if (metadata.description) {
+        const desc = metadata.description.toLowerCase();
+
+        // Metal type
+        const metals = ['platinum', 'white gold', 'yellow gold', 'rose gold', '18k', '14k', 'palladium'];
+        for (const metal of metals) {
+            if (desc.includes(metal)) {
+                metadata.metalType = metal;
+                break;
+            }
+        }
+
+        // Diamond shape
+        const shapes = ['round', 'princess', 'cushion', 'oval', 'pear', 'emerald', 'marquise', 'radiant', 'asscher'];
+        for (const shape of shapes) {
+            if (desc.includes(shape)) {
+                metadata.gemstone = shape + ' cut diamond';
+                break;
+            }
+        }
+
+        // Carat weight pattern
+        const caratMatch = desc.match(/(\d+\.?\d*)\s*(?:ct|carat|tcw)/i);
+        if (caratMatch) {
+            metadata.caratWeight = caratMatch[1] + ' ct';
+        }
+
+        // Setting type
+        const settings = ['solitaire', 'halo', 'three-stone', 'pavé', 'pave', 'channel', 'bezel', 'cathedral'];
+        for (const setting of settings) {
+            if (desc.includes(setting)) {
+                metadata.setting = setting;
+                break;
+            }
+        }
+    }
+
+    return metadata;
+}
+
+// Extract metadata from JSON-LD
+function extractJsonLdMetadata(data, metadata) {
+    if (Array.isArray(data)) {
+        data.forEach(item => extractJsonLdMetadata(item, metadata));
+        return;
+    }
+
+    if (typeof data !== 'object' || !data) return;
+
+    if (data['@type'] === 'Product') {
+        metadata.title = metadata.title || data.name;
+        metadata.description = metadata.description || data.description;
+        metadata.sku = metadata.sku || data.sku;
+        metadata.brand = metadata.brand || data.brand?.name || data.brand;
+
+        if (data.offers) {
+            const offer = Array.isArray(data.offers) ? data.offers[0] : data.offers;
+            metadata.price = metadata.price || offer.price;
+            metadata.currency = metadata.currency || offer.priceCurrency;
+            metadata.availability = offer.availability;
+        }
+    }
+}
+
+// Resolve relative URLs
+function resolveUrl(url, baseUrl) {
+    if (!url) return null;
+    try {
+        if (url.startsWith('//')) {
+            return 'https:' + url;
+        }
+        if (url.startsWith('/')) {
+            const base = new URL(baseUrl);
+            return base.origin + url;
+        }
+        if (!url.startsWith('http')) {
+            return new URL(url, baseUrl).href;
+        }
+        return url;
+    } catch {
+        return url;
+    }
+}
+
+// Check if URL is a valid image
+function isValidImageUrl(url) {
+    if (!url) return false;
+    const lower = url.toLowerCase();
+    // Exclude common non-product images
+    if (lower.includes('logo') || lower.includes('icon') || lower.includes('sprite') ||
+        lower.includes('pixel') || lower.includes('tracking') || lower.includes('analytics') ||
+        lower.includes('placeholder') || lower.includes('loading')) {
+        return false;
+    }
+    // Check for image extensions or image CDN patterns
+    return /\.(jpg|jpeg|png|webp|gif)/i.test(url) ||
+           url.includes('cloudinary') ||
+           url.includes('imgix') ||
+           url.includes('shopify') ||
+           url.includes('scene7') ||
+           url.includes('/images/') ||
+           url.includes('/product/');
+}
+
+// Import ring from URL endpoint
+app.post('/api/import-ring', async (req, res) => {
+    const { url } = req.body;
+
+    if (!url) {
+        return res.status(400).json({ error: 'URL is required' });
+    }
+
+    // Validate URL format
+    let parsedUrl;
+    try {
+        parsedUrl = new URL(url);
+    } catch {
+        return res.status(400).json({ error: 'Invalid URL format' });
+    }
+
+    // Check if vendor is supported
+    const vendor = getVendorFromUrl(url);
+    if (!vendor) {
+        return res.status(400).json({
+            error: 'Unsupported vendor',
+            message: 'This jewelry store is not yet supported. Try Tiffany, Blue Nile, James Allen, Brilliant Earth, or other major retailers.',
+            supportedVendors: SUPPORTED_VENDORS
+        });
+    }
+
+    console.log(`🔗 Importing ring from ${vendor}: ${url}`);
+
+    try {
+        // Fetch the page with a realistic user agent
+        const response = await fetch(url, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                'Accept-Language': 'en-US,en;q=0.5',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Connection': 'keep-alive',
+                'Upgrade-Insecure-Requests': '1'
+            },
+            timeout: 15000
+        });
+
+        if (!response.ok) {
+            console.error(`Fetch failed: ${response.status}`);
+            return res.status(response.status).json({
+                error: 'Could not fetch page',
+                message: 'The page could not be loaded. Please check the URL and try again.'
+            });
+        }
+
+        const html = await response.text();
+        const $ = cheerio.load(html);
+
+        // Extract images and metadata
+        const images = extractImages($, url);
+        const metadata = extractMetadata($);
+
+        if (images.length === 0) {
+            return res.status(404).json({
+                error: 'No images found',
+                message: 'Could not find ring images on this page. Please try a direct product page URL.'
+            });
+        }
+
+        console.log(`✅ Imported: ${metadata.title || 'Ring'} - ${images.length} images`);
+
+        return res.json({
+            success: true,
+            vendor: vendor,
+            url: url,
+            images: images,
+            metadata: metadata
+        });
+
+    } catch (error) {
+        console.error('Import error:', error);
+        return res.status(500).json({
+            error: 'Import failed',
+            message: 'Could not import ring details. Please try again or use a different URL.'
+        });
     }
 });
 
