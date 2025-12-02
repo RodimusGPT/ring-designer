@@ -61,6 +61,20 @@
 
                 <!-- Form Panel -->
                 <div class="designer-form-panel">
+                    <!-- Tab Navigation -->
+                    <div class="designer-tabs">
+                        <button class="tab-btn active" onclick="app.switchTab('import')" id="tabImport">
+                            <span class="tab-icon">🔗</span>
+                            <span class="tab-label">Import Ring</span>
+                        </button>
+                        <button class="tab-btn" onclick="app.switchTab('design')" id="tabDesign">
+                            <span class="tab-icon">✨</span>
+                            <span class="tab-label">Design Your Own</span>
+                        </button>
+                    </div>
+
+                    <!-- Tab Content: Import -->
+                    <div class="tab-content active" id="tabContentImport">
                     <!-- URL Import Section -->
                     <div class="url-import-section" id="urlImportSection">
                         <div class="import-header">
@@ -114,7 +128,7 @@
                         </div>
 
                         <div class="import-divider">
-                            <span>or design your own</span>
+                            <span>or switch to Design tab</span>
                         </div>
                     </div>
 
@@ -143,7 +157,10 @@
                             </button>
                         </div>
                     </div>
+                    </div><!-- End Tab Content: Import -->
 
+                    <!-- Tab Content: Design -->
+                    <div class="tab-content" id="tabContentDesign">
                     <!-- Conversation Container -->
                     <div class="design-conversation" id="designConversation">
                         <!-- Initial prompt area (shown when no designs yet) -->
@@ -219,6 +236,7 @@
                             </div>
                         </div>
                     </div>
+                    </div><!-- End Tab Content: Design -->
                 </div>
             </div>
         </div>
