@@ -1310,6 +1310,66 @@ img {
 }
 
 /* ========================================
+   Designer Tabs
+   ======================================== */
+.designer-tabs {
+    display: flex;
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-lg);
+    background: rgba(255, 255, 255, 0.5);
+    padding: var(--spacing-xs);
+    border-radius: var(--radius-xl);
+    border: 2px solid var(--flamingo);
+}
+
+.tab-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-lg);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #888;
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.tab-btn:hover {
+    color: var(--hot-pink);
+    background: rgba(233, 30, 140, 0.05);
+}
+
+.tab-btn.active {
+    background: linear-gradient(135deg, var(--hot-pink), var(--coral));
+    color: white;
+    box-shadow: 0 4px 15px rgba(233, 30, 140, 0.3);
+}
+
+.tab-icon {
+    font-size: 1.2rem;
+}
+
+.tab-label {
+    white-space: nowrap;
+}
+
+/* Tab Content */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+/* ========================================
    URL Import Section
    ======================================== */
 .url-import-section {
@@ -1385,6 +1445,56 @@ img {
 
 .vendor-logo:hover {
     transform: scale(1.15);
+}
+
+/* Clickable Vendor Logo Links */
+.vendor-logo-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    text-decoration: none;
+    transition: all var(--transition);
+    padding: 0.5rem;
+    border-radius: var(--radius-md);
+}
+
+.vendor-logo-link:hover {
+    transform: translateY(-3px);
+    background: rgba(0, 206, 209, 0.1);
+}
+
+.vendor-logo-icon {
+    font-size: 1.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background: var(--white);
+    border-radius: 50%;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition);
+}
+
+.vendor-logo-link:hover .vendor-logo-icon {
+    box-shadow: var(--shadow-md);
+    transform: scale(1.1);
+}
+
+.vendor-logo-name {
+    font-size: 0.7rem;
+    color: #666;
+    font-weight: 500;
+    text-align: center;
+    max-width: 70px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.vendor-logo-link:hover .vendor-logo-name {
+    color: var(--turquoise);
 }
 
 .btn-show-all-vendors {
@@ -1881,9 +1991,36 @@ img {
         font-size: 0.9rem;
     }
 
+    /* Tabs - Tablet */
+    .designer-tabs {
+        gap: var(--spacing-xs);
+        padding: 0.3rem;
+    }
+
+    .tab-btn {
+        padding: var(--spacing-xs) var(--spacing-sm);
+        font-size: 0.85rem;
+    }
+
+    .tab-icon {
+        font-size: 1rem;
+    }
+
     /* URL Import - Tablet */
     .url-import-section {
         padding: var(--spacing-md);
+    }
+
+    /* Vendor Logo Links - Tablet */
+    .vendor-logo-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 1.5rem;
+    }
+
+    .vendor-logo-name {
+        font-size: 0.65rem;
+        max-width: 60px;
     }
 
     .import-title {
@@ -2171,6 +2308,26 @@ img {
         display: none;
     }
 
+    /* Tabs - Mobile */
+    .designer-tabs {
+        border-radius: var(--radius-lg);
+    }
+
+    .tab-btn {
+        flex-direction: column;
+        gap: 0.2rem;
+        padding: var(--spacing-xs);
+        font-size: 0.75rem;
+    }
+
+    .tab-icon {
+        font-size: 1.2rem;
+    }
+
+    .tab-label {
+        font-size: 0.7rem;
+    }
+
     /* URL Import - Mobile */
     .url-import-section {
         padding: var(--spacing-sm);
@@ -2188,6 +2345,22 @@ img {
     .vendor-logo {
         font-size: 1.2rem;
         padding: 0.4rem;
+    }
+
+    /* Vendor Logo Links - Mobile */
+    .vendor-logo-link {
+        padding: 0.3rem;
+    }
+
+    .vendor-logo-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.3rem;
+    }
+
+    .vendor-logo-name {
+        font-size: 0.6rem;
+        max-width: 55px;
     }
 
     .btn-show-all-vendors {
