@@ -422,6 +422,22 @@ function isValidImageUrl(url) {
            url.includes('/product/');
 }
 
+// Helper: Fetch with proper timeout using AbortController
+async function fetchWithTimeout(url, options = {}, timeoutMs = 15000) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+        const response = await fetch(url, {
+            ...options,
+            signal: controller.signal
+        });
+        return response;
+    } finally {
+        clearTimeout(timeoutId);
+    }
+}
+
 // Import ring from URL endpoint
 app.post('/api/import-ring', async (req, res) => {
     const { url } = req.body;
@@ -451,21 +467,45 @@ app.post('/api/import-ring', async (req, res) => {
     console.log(`🔗 Importing ring from ${vendor}: ${url}`);
 
     try {
-        // Fetch the page with a realistic user agent
-        const response = await fetch(url, {
+        // Fetch the page with proper timeout and realistic headers
+        const response = await fetchWithTimeout(url, {
             headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-                'Accept-Language': 'en-US,en;q=0.5',
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+                'Accept-Language': 'en-US,en;q=0.9',
                 'Accept-Encoding': 'gzip, deflate, br',
-                'Connection': 'keep-alive',
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache',
+                'Sec-Ch-Ua': '"Not A(Brand";v="99", "Google Chrome";v="121", "Chromium";v="121"',
+                'Sec-Ch-Ua-Mobile': '?0',
+                'Sec-Ch-Ua-Platform': '"macOS"',
+                'Sec-Fetch-Dest': 'document',
+                'Sec-Fetch-Mode': 'navigate',
+                'Sec-Fetch-Site': 'none',
+                'Sec-Fetch-User': '?1',
                 'Upgrade-Insecure-Requests': '1'
             },
-            timeout: 15000
-        });
+            redirect: 'follow'
+        }, 20000);
 
+        // Handle specific HTTP errors
         if (!response.ok) {
-            console.error(`Fetch failed: ${response.status}`);
+            console.error(`Fetch failed: ${response.status} ${response.statusText}`);
+
+            if (response.status === 403) {
+                return res.status(403).json({
+                    error: 'Access blocked',
+                    message: `${vendor} is blocking automated requests. Please try a different retailer like Blue Nile or Brilliant Earth, or manually save the ring image and upload it.`
+                });
+            }
+
+            if (response.status === 429) {
+                return res.status(429).json({
+                    error: 'Rate limited',
+                    message: 'Too many requests. Please wait a moment and try again.'
+                });
+            }
+
             return res.status(response.status).json({
                 error: 'Could not fetch page',
                 message: 'The page could not be loaded. Please check the URL and try again.'
@@ -473,6 +513,20 @@ app.post('/api/import-ring', async (req, res) => {
         }
 
         const html = await response.text();
+
+        // Check for bot protection pages (Cloudflare, PerimeterX, etc.)
+        if (html.includes('challenge-platform') ||
+            html.includes('cf-browser-verification') ||
+            html.includes('px-captcha') ||
+            html.includes('Access Denied') ||
+            html.length < 1000) {
+            console.warn(`Bot protection detected for ${vendor}`);
+            return res.status(403).json({
+                error: 'Bot protection',
+                message: `${vendor} has bot protection enabled. Please try Blue Nile, James Allen, or Brilliant Earth instead, or manually save the ring image.`
+            });
+        }
+
         const $ = cheerio.load(html);
 
         // Extract images and metadata
@@ -497,7 +551,23 @@ app.post('/api/import-ring', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Import error:', error);
+        console.error('Import error:', error.name, error.message);
+
+        // Handle specific error types
+        if (error.name === 'AbortError') {
+            return res.status(504).json({
+                error: 'Request timeout',
+                message: 'The request took too long. The website may be slow or blocking requests.'
+            });
+        }
+
+        if (error.cause?.code === 'ENOTFOUND' || error.cause?.code === 'ECONNREFUSED') {
+            return res.status(502).json({
+                error: 'Connection failed',
+                message: 'Could not connect to the website. Please check the URL.'
+            });
+        }
+
         return res.status(500).json({
             error: 'Import failed',
             message: 'Could not import ring details. Please try again or use a different URL.'

@@ -153,13 +153,24 @@ const FalAPI = {
                 body: JSON.stringify({ url })
             });
 
-            const result = await response.json();
-
-            if (!response.ok) {
-                console.error('Import failed:', result);
+            // Try to parse JSON response
+            let result;
+            try {
+                result = await response.json();
+            } catch (parseError) {
+                console.error('Failed to parse response:', parseError);
                 return {
                     success: false,
-                    error: result.error,
+                    error: 'Invalid response',
+                    message: 'Received an invalid response from the server. Please try again.'
+                };
+            }
+
+            if (!response.ok) {
+                console.error('Import failed:', response.status, result);
+                return {
+                    success: false,
+                    error: result.error || 'Import failed',
                     message: result.message || 'Could not import ring from this URL'
                 };
             }
@@ -176,10 +187,20 @@ const FalAPI = {
 
         } catch (error) {
             console.error('Import error:', error);
+
+            // Check for specific error types
+            if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                return {
+                    success: false,
+                    error: 'Connection failed',
+                    message: 'Could not connect to the server. Please check your internet connection.'
+                };
+            }
+
             return {
                 success: false,
-                error: error.message,
-                message: 'Network error. Please check your connection and try again.'
+                error: error.message || 'Network error',
+                message: 'Unable to reach the server. Please try again in a moment.'
             };
         }
     },
