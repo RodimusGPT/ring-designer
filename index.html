@@ -78,79 +78,58 @@
                     <!-- URL Import Section -->
                     <div class="url-import-section" id="urlImportSection">
                         <div class="import-header">
-                            <h3 class="import-title">Import from Your Favorite Jeweler</h3>
-                            <p class="import-subtitle">Found a ring you love? Paste the URL and we'll import it!</p>
+                            <h3 class="import-title">Import a Ring You Love</h3>
+                            <p class="import-subtitle">Found a ring online? Paste the image URL directly!</p>
                         </div>
 
-                        <div class="vendor-showcase">
-                            <div class="vendor-logos" id="vendorLogos">
-                                <!-- Populated by JavaScript -->
+                        <div class="import-instructions">
+                            <div class="instruction-step">
+                                <span class="step-number">1</span>
+                                <span>Find a ring image on any website</span>
                             </div>
-                            <button class="btn-show-all-vendors" onclick="app.toggleVendorList()">
-                                See all supported stores
-                            </button>
+                            <div class="instruction-step">
+                                <span class="step-number">2</span>
+                                <span>Right-click the image → "Copy image address"</span>
+                            </div>
+                            <div class="instruction-step">
+                                <span class="step-number">3</span>
+                                <span>Paste the URL below</span>
+                            </div>
                         </div>
 
                         <div class="url-input-container">
                             <div class="url-input-wrapper">
-                                <span class="url-icon">🔗</span>
+                                <span class="url-icon">🖼️</span>
                                 <input
                                     type="url"
                                     id="ringUrlInput"
-                                    placeholder="Paste ring URL from Tiffany, Blue Nile, James Allen..."
+                                    placeholder="Paste image URL (ends in .jpg, .png, .webp...)"
                                     autocomplete="off"
                                 >
-                                <button class="btn-import" onclick="app.importFromUrl()" id="importBtn">
+                                <button class="btn-import" onclick="app.importImageUrl()" id="importBtn">
                                     Import
                                 </button>
                             </div>
                             <div class="url-status" id="urlStatus"></div>
                         </div>
 
-                        <!-- Expanded Vendor List (hidden by default) -->
-                        <div class="vendor-list-expanded" id="vendorListExpanded" style="display: none;">
-                            <div class="vendor-category" id="vendorLuxury">
-                                <h4>Luxury Brands</h4>
-                                <div class="vendor-grid"></div>
-                            </div>
-                            <div class="vendor-category" id="vendorSpecialist">
-                                <h4>Diamond Specialists</h4>
-                                <div class="vendor-grid"></div>
-                            </div>
-                            <div class="vendor-category" id="vendorRetail">
-                                <h4>Major Retailers</h4>
-                                <div class="vendor-grid"></div>
-                            </div>
-                            <div class="vendor-category" id="vendorDesigner">
-                                <h4>Designer Collections</h4>
-                                <div class="vendor-grid"></div>
-                            </div>
-                        </div>
-
                         <div class="import-divider">
-                            <span>or switch to Design tab</span>
+                            <span>or design your own below</span>
                         </div>
                     </div>
 
                     <!-- Imported Ring Preview (hidden initially) -->
                     <div class="imported-ring-preview" id="importedRingPreview" style="display: none;">
                         <div class="imported-ring-header">
-                            <span class="imported-vendor-badge" id="importedVendorBadge"></span>
+                            <span class="imported-label">Your Imported Ring</span>
                             <button class="btn-close-import" onclick="app.clearImport()">×</button>
                         </div>
-                        <div class="imported-ring-images" id="importedRingImages">
-                            <!-- Images populated by JavaScript -->
-                        </div>
-                        <div class="imported-ring-details">
-                            <h3 id="importedRingTitle">Ring Name</h3>
-                            <p class="imported-ring-price" id="importedRingPrice"></p>
-                            <div class="imported-ring-meta" id="importedRingMeta">
-                                <!-- Metadata populated by JavaScript -->
-                            </div>
+                        <div class="imported-ring-image-container">
+                            <img id="importedRingImage" src="" alt="Imported ring" />
                         </div>
                         <div class="imported-ring-actions">
                             <button class="btn btn-primary" onclick="app.selectImportedRing()">
-                                I Love This Ring! 💕
+                                This Is The One! 💕
                             </button>
                             <button class="btn btn-secondary" onclick="app.useAsInspiration()">
                                 Use as Inspiration

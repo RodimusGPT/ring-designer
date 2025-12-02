@@ -32,10 +32,7 @@ const app = {
         // Setup ring terminology guide with live preview
         this.setupRingGuide();
 
-        // Setup vendor showcase
-        this.setupVendorShowcase();
-
-        // Setup URL input handler
+        // Setup URL input handler for direct image imports
         this.setupUrlInput();
 
         // Load cached term previews from Firebase
@@ -134,97 +131,24 @@ const app = {
     // ============================================
 
     /**
-     * Setup vendor showcase with top vendor logos as clickable links
-     */
-    setupVendorShowcase() {
-        if (!CONFIG.JEWELRY_VENDORS) return;
-
-        // Show top 6 vendors in the showcase as clickable links
-        const topVendors = CONFIG.JEWELRY_VENDORS.slice(0, 6);
-        const vendorLogos = document.getElementById('vendorLogos');
-
-        if (vendorLogos) {
-            vendorLogos.innerHTML = topVendors.map(vendor =>
-                `<a href="https://${vendor.domain}" target="_blank" rel="noopener noreferrer"
-                    class="vendor-logo-link" title="Visit ${vendor.name}">
-                    <span class="vendor-logo-icon">${vendor.logo}</span>
-                    <span class="vendor-logo-name">${vendor.name}</span>
-                </a>`
-            ).join('');
-        }
-
-        // Populate the expanded vendor list by tier
-        const tiers = {
-            luxury: document.querySelector('#vendorLuxury .vendor-grid'),
-            specialist: document.querySelector('#vendorSpecialist .vendor-grid'),
-            retail: document.querySelector('#vendorRetail .vendor-grid'),
-            designer: document.querySelector('#vendorDesigner .vendor-grid')
-        };
-
-        CONFIG.JEWELRY_VENDORS.forEach(vendor => {
-            const container = tiers[vendor.tier];
-            if (container) {
-                container.innerHTML += `
-                    <a href="https://${vendor.domain}" target="_blank" rel="noopener noreferrer"
-                       class="vendor-item" title="Visit ${vendor.name}">
-                        <span class="vendor-item-logo">${vendor.logo}</span>
-                        <span class="vendor-item-name">${vendor.name}</span>
-                    </a>
-                `;
-            }
-        });
-    },
-
-    /**
-     * Setup URL input real-time validation
+     * Setup URL input for direct image URL import
      */
     setupUrlInput() {
         const urlInput = document.getElementById('ringUrlInput');
-        const urlStatus = document.getElementById('urlStatus');
 
         if (urlInput) {
-            // Handle Enter key
+            // Handle Enter key to import
             urlInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
-                    this.importFromUrl();
+                    this.importImageUrl();
                 }
             });
 
-            // Real-time URL validation
+            // Clear status on input
             urlInput.addEventListener('input', () => {
-                const url = urlInput.value.trim();
-                if (!url) {
-                    urlStatus.textContent = '';
-                    urlStatus.className = 'url-status';
-                    return;
-                }
-
-                const validation = FalAPI.validateUrl(url);
-                urlStatus.textContent = validation.valid
-                    ? `${validation.vendor.logo} Ready to import from ${validation.vendor.name}`
-                    : validation.message;
-                urlStatus.className = `url-status ${validation.valid ? 'valid' : 'invalid'}`;
+                this.showUrlStatus('', '');
             });
-        }
-    },
-
-    /**
-     * Toggle expanded vendor list visibility
-     */
-    toggleVendorList() {
-        const expandedList = document.getElementById('vendorListExpanded');
-        const toggleBtn = document.querySelector('.btn-show-all-vendors');
-
-        if (expandedList) {
-            this.vendorListExpanded = !this.vendorListExpanded;
-            expandedList.style.display = this.vendorListExpanded ? 'block' : 'none';
-
-            if (toggleBtn) {
-                toggleBtn.textContent = this.vendorListExpanded
-                    ? 'Hide vendor list'
-                    : 'See all supported stores';
-            }
         }
     },
 
@@ -256,57 +180,72 @@ const app = {
     },
 
     /**
-     * Import ring from URL
+     * Import ring from direct image URL
+     * Simple and reliable - user pastes image URL directly
      */
-    async importFromUrl() {
+    async importImageUrl() {
         const urlInput = document.getElementById('ringUrlInput');
         const url = urlInput?.value.trim();
 
         if (!url) {
-            this.showUrlStatus('Please enter a ring URL', 'error');
+            this.showUrlStatus('Please paste an image URL', 'error');
             return;
         }
 
-        // Validate URL
-        const validation = FalAPI.validateUrl(url);
-        if (!validation.valid) {
-            this.showUrlStatus(validation.message, 'error');
+        // Basic URL validation
+        try {
+            new URL(url);
+        } catch {
+            this.showUrlStatus('Please enter a valid URL', 'error');
+            return;
+        }
+
+        // Check if it looks like an image URL
+        const imageExtensions = /\.(jpg|jpeg|png|gif|webp|avif|bmp|svg)(\?.*)?$/i;
+        const imagePatterns = /\/(images|photos|products|media|cdn|static)\//i;
+        const isLikelyImage = imageExtensions.test(url) || imagePatterns.test(url) || url.includes('cloudinary') || url.includes('imgix');
+
+        if (!isLikelyImage) {
+            this.showUrlStatus('This doesn\'t look like an image URL. Try right-clicking an image and selecting "Copy image address"', 'error');
             return;
         }
 
         // Show loading state
         this.showLoading(true);
-        this.showUrlStatus(`${validation.vendor.logo} Importing from ${validation.vendor.name}...`, 'loading');
+        this.showUrlStatus('Loading image...', 'loading');
+
+        // Test if the image loads
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
 
         try {
-            const result = await FalAPI.importFromUrl(url);
+            await new Promise((resolve, reject) => {
+                img.onload = resolve;
+                img.onerror = () => reject(new Error('Image failed to load'));
+                img.src = url;
 
-            if (result.success) {
-                console.log('💍 Ring imported:', result);
+                // Timeout after 10 seconds
+                setTimeout(() => reject(new Error('Image took too long to load')), 10000);
+            });
 
-                // Store imported ring data
-                this.importedRing = {
-                    vendor: result.vendor,
-                    url: result.url,
-                    images: result.images,
-                    metadata: result.metadata,
-                    vendorInfo: validation.vendor
-                };
+            console.log('💍 Image loaded:', url);
 
-                // Display the imported ring
-                this.displayImportedRing();
-                this.showUrlStatus('Ring imported successfully!', 'success');
+            // Store imported ring data
+            this.importedRing = {
+                imageUrl: url,
+                source: new URL(url).hostname
+            };
 
-                // Clear input
-                urlInput.value = '';
+            // Display the imported ring
+            this.displayImportedRing();
+            this.showUrlStatus('Image imported!', 'success');
 
-            } else {
-                this.showUrlStatus(result.message || 'Import failed', 'error');
-            }
+            // Clear input
+            urlInput.value = '';
 
         } catch (error) {
-            console.error('Import error:', error);
-            this.showUrlStatus('Could not import ring. Please try again.', 'error');
+            console.error('Image load error:', error);
+            this.showUrlStatus('Could not load this image. The website may be blocking it. Try saving the image first and uploading it.', 'error');
         } finally {
             this.showLoading(false);
         }
@@ -340,96 +279,15 @@ const app = {
         if (urlImportSection) urlImportSection.style.display = 'none';
         if (designConversation) designConversation.style.display = 'none';
 
-        // Update vendor badge
-        const vendorBadge = document.getElementById('importedVendorBadge');
-        if (vendorBadge && this.importedRing.vendorInfo) {
-            vendorBadge.innerHTML = `${this.importedRing.vendorInfo.logo} ${this.importedRing.vendorInfo.name}`;
-        }
-
-        // Update images
-        const imagesContainer = document.getElementById('importedRingImages');
-        if (imagesContainer && this.importedRing.images.length > 0) {
-            imagesContainer.innerHTML = `
-                <div class="imported-main-image">
-                    <img src="${this.importedRing.images[0]}" alt="Ring" id="importedMainImage">
-                </div>
-                ${this.importedRing.images.length > 1 ? `
-                    <div class="imported-thumbnails">
-                        ${this.importedRing.images.map((img, i) => `
-                            <img src="${img}" alt="View ${i + 1}"
-                                 class="imported-thumbnail ${i === 0 ? 'active' : ''}"
-                                 onclick="app.switchImportedImage(${i})">
-                        `).join('')}
-                    </div>
-                ` : ''}
-            `;
-        }
-
-        // Update title
-        const titleEl = document.getElementById('importedRingTitle');
-        if (titleEl) {
-            titleEl.textContent = this.importedRing.metadata.title || 'Beautiful Ring';
-        }
-
-        // Update price
-        const priceEl = document.getElementById('importedRingPrice');
-        if (priceEl && this.importedRing.metadata.price) {
-            const currency = this.importedRing.metadata.currency || 'USD';
-            const formatter = new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: currency
-            });
-            priceEl.textContent = formatter.format(parseFloat(this.importedRing.metadata.price));
-        } else if (priceEl) {
-            priceEl.textContent = '';
-        }
-
-        // Update metadata
-        const metaContainer = document.getElementById('importedRingMeta');
-        if (metaContainer) {
-            const meta = this.importedRing.metadata;
-            const metaTags = [];
-
-            if (meta.metalType) metaTags.push({ label: 'Metal', value: meta.metalType });
-            if (meta.gemstone) metaTags.push({ label: 'Stone', value: meta.gemstone });
-            if (meta.setting) metaTags.push({ label: 'Setting', value: meta.setting });
-            if (meta.caratWeight) metaTags.push({ label: 'Carat', value: meta.caratWeight });
-            if (meta.brand) metaTags.push({ label: 'Brand', value: meta.brand });
-
-            metaContainer.innerHTML = metaTags.map(tag =>
-                `<span class="meta-tag"><strong>${tag.label}:</strong> ${tag.value}</span>`
-            ).join('');
-
-            // Add description if available
-            if (meta.description) {
-                metaContainer.innerHTML += `
-                    <p class="imported-description">${meta.description.substring(0, 200)}${meta.description.length > 200 ? '...' : ''}</p>
-                `;
-            }
+        // Update the imported ring image
+        const importedImage = document.getElementById('importedRingImage');
+        if (importedImage && this.importedRing.imageUrl) {
+            importedImage.src = this.importedRing.imageUrl;
+            importedImage.alt = 'Imported ring from ' + (this.importedRing.source || 'web');
         }
 
         // Also show in the live preview panel
-        this.displayPreview(this.importedRing.images[0], this.importedRing.metadata.title || 'Imported Ring');
-    },
-
-    /**
-     * Switch between imported ring images
-     */
-    switchImportedImage(index) {
-        if (!this.importedRing || !this.importedRing.images[index]) return;
-
-        const mainImage = document.getElementById('importedMainImage');
-        if (mainImage) {
-            mainImage.src = this.importedRing.images[index];
-        }
-
-        // Update thumbnail active state
-        document.querySelectorAll('.imported-thumbnail').forEach((thumb, i) => {
-            thumb.classList.toggle('active', i === index);
-        });
-
-        // Update live preview
-        this.displayPreview(this.importedRing.images[index], this.importedRing.metadata.title || 'Imported Ring');
+        this.displayPreview(this.importedRing.imageUrl, 'Imported Ring');
     },
 
     /**
@@ -444,13 +302,9 @@ const app = {
         // Create design object from imported ring
         this.currentDesign = {
             type: 'imported',
-            imageUrl: this.importedRing.images[0],
-            images: this.importedRing.images,
-            title: this.importedRing.metadata.title || 'Imported Ring',
-            description: this.importedRing.metadata.description || '',
-            vendor: this.importedRing.vendor,
-            sourceUrl: this.importedRing.url,
-            metadata: this.importedRing.metadata
+            imageUrl: this.importedRing.imageUrl,
+            title: 'Your Chosen Ring',
+            source: this.importedRing.source
         };
 
         // Show preview screen
@@ -459,33 +313,28 @@ const app = {
 
     /**
      * Use imported ring as inspiration for AI design
+     * Switches to the design tab with the image as reference
      */
     useAsInspiration() {
         if (!this.importedRing) return;
 
-        // Build a description from the imported ring metadata
-        const meta = this.importedRing.metadata;
-        let inspiration = '';
+        // Switch to design tab
+        this.switchTab('design');
 
-        if (meta.gemstone) inspiration += meta.gemstone + ' ';
-        if (meta.setting) inspiration += meta.setting + ' setting ';
-        if (meta.metalType) inspiration += 'in ' + meta.metalType + ' ';
-        if (meta.caratWeight) inspiration += '(' + meta.caratWeight + ')';
-
-        // If we couldn't build much, use a generic description
-        if (!inspiration.trim()) {
-            inspiration = 'engagement ring similar to ' + (meta.title || 'the imported design');
-        }
-
-        // Clear import and show design form with pre-filled description
+        // Clear import view
         this.clearImport();
 
+        // Pre-fill with a helpful prompt
         const textarea = document.getElementById('ringDescription');
         if (textarea) {
-            textarea.value = inspiration.trim();
-            document.getElementById('charCount').textContent = textarea.value.length;
+            textarea.value = 'I love this ring! Create something similar with ';
             textarea.focus();
+            textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+            document.getElementById('charCount').textContent = textarea.value.length;
         }
+
+        // Show a hint
+        this.showUrlStatus('Describe what you love about this ring, or what changes you\'d like!', 'success');
     },
 
     /**
