@@ -58,122 +58,122 @@ const CONFIG = {
         ]
     },
 
-    // Example images for each ring term - shown when user taps terminology chips
-    // Each term maps to an example image with caption
+    // Example images for each ring term - ENGAGEMENT RINGS ONLY
+    // Curated from Unsplash & Pexels - all verified engagement ring photos
     TERM_EXAMPLES: {
-        // Diamond Shapes
+        // Diamond Shapes - All engagement ring examples
         'Round Brilliant': {
-            image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=600&q=80',
-            caption: 'Round Brilliant - The classic choice with maximum sparkle'
+            image: 'https://images.pexels.com/photos/1150611/pexels-photo-1150611.jpeg?auto=compress&cs=tinysrgb&w=600',
+            caption: 'Round Brilliant Engagement Ring - Maximum sparkle and fire'
         },
         'Princess': {
-            image: 'https://images.unsplash.com/photo-1599643477877-530eb83abc8e?w=600&q=80',
-            caption: 'Princess Cut - Modern square shape with brilliant fire'
+            image: 'https://images.pexels.com/photos/2735970/pexels-photo-2735970.jpeg?auto=compress&cs=tinysrgb&w=600',
+            caption: 'Princess Cut Engagement Ring - Modern square brilliance'
         },
         'Cushion': {
-            image: 'https://images.unsplash.com/photo-1589674781759-c21c37956a44?w=600&q=80',
-            caption: 'Cushion Cut - Soft rounded corners, romantic feel'
+            image: 'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=600&q=80',
+            caption: 'Cushion Cut Engagement Ring - Soft romantic corners'
         },
         'Oval': {
-            image: 'https://images.unsplash.com/photo-1586104237516-5765e76a6fc0?w=600&q=80',
-            caption: 'Oval - Elongated elegance, flatters the finger'
+            image: 'https://images.unsplash.com/photo-1610694955371-d4a3e0ce4b52?w=600&q=80',
+            caption: 'Oval Engagement Ring - Elongated elegance'
         },
         'Pear': {
-            image: 'https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?w=600&q=80',
-            caption: 'Pear - Unique teardrop shape, feminine and distinctive'
+            image: 'https://images.pexels.com/photos/4046571/pexels-photo-4046571.jpeg?auto=compress&cs=tinysrgb&w=600',
+            caption: 'Pear Shaped Engagement Ring - Unique teardrop beauty'
         },
         'Emerald': {
-            image: 'https://images.unsplash.com/photo-1591209627710-d2427a94c82e?w=600&q=80',
-            caption: 'Emerald Cut - Step-cut sophistication, Art Deco glamour'
+            image: 'https://images.pexels.com/photos/5370706/pexels-photo-5370706.jpeg?auto=compress&cs=tinysrgb&w=600',
+            caption: 'Emerald Cut Engagement Ring - Art Deco sophistication'
         },
         'Marquise': {
-            image: 'https://images.unsplash.com/photo-1598560917505-59a3ad559071?w=600&q=80',
-            caption: 'Marquise - Boat-shaped, maximizes carat appearance'
+            image: 'https://images.pexels.com/photos/4040567/pexels-photo-4040567.jpeg?auto=compress&cs=tinysrgb&w=600',
+            caption: 'Marquise Engagement Ring - Maximizes carat appearance'
         },
         'Radiant': {
-            image: 'https://images.unsplash.com/photo-1543294001-f7cd5d7fb516?w=600&q=80',
-            caption: 'Radiant Cut - Rectangular brilliance with lots of fire'
+            image: 'https://images.unsplash.com/photo-1611955167811-4711904bb9f8?w=600&q=80',
+            caption: 'Radiant Cut Engagement Ring - Brilliant rectangular fire'
         },
         'Asscher': {
-            image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=600&q=80',
-            caption: 'Asscher - Square step-cut, vintage Art Deco icon'
+            image: 'https://images.unsplash.com/photo-1609207131662-da80fbce3eef?w=600&q=80',
+            caption: 'Asscher Cut Engagement Ring - Vintage Art Deco icon'
         },
 
-        // Settings
+        // Settings - All engagement ring examples
         'Solitaire': {
-            image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=600&q=80',
-            caption: 'Solitaire - Single diamond, timeless elegance'
+            image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=600&q=80',
+            caption: 'Solitaire Engagement Ring - Timeless single diamond'
         },
         'Halo': {
-            image: 'https://images.unsplash.com/photo-1589674781759-c21c37956a44?w=600&q=80',
-            caption: 'Halo - Center stone surrounded by sparkling diamonds'
+            image: 'https://images.pexels.com/photos/1444282/pexels-photo-1444282.jpeg?auto=compress&cs=tinysrgb&w=600',
+            caption: 'Halo Engagement Ring - Surrounded by sparkling diamonds'
         },
         'Three-Stone': {
-            image: 'https://images.unsplash.com/photo-1598560917505-59a3ad559071?w=600&q=80',
-            caption: 'Three-Stone - Past, present, and future'
+            image: 'https://images.pexels.com/photos/6624862/pexels-photo-6624862.jpeg?auto=compress&cs=tinysrgb&w=600',
+            caption: 'Three-Stone Engagement Ring - Past, present, future'
         },
         'Pavé': {
-            image: 'https://images.unsplash.com/photo-1599643477877-530eb83abc8e?w=600&q=80',
-            caption: 'Pavé - Band encrusted with tiny diamonds'
+            image: 'https://images.unsplash.com/photo-1603561596112-0a132b757442?w=600&q=80',
+            caption: 'Pavé Engagement Ring - Band encrusted with diamonds'
         },
         'Channel-Set': {
-            image: 'https://images.unsplash.com/photo-1600721391776-b5cd0e0048f9?w=600&q=80',
-            caption: 'Channel-Set - Diamonds set flush within the band'
+            image: 'https://images.pexels.com/photos/691046/pexels-photo-691046.jpeg?auto=compress&cs=tinysrgb&w=600',
+            caption: 'Channel-Set Engagement Ring - Diamonds flush in band'
         },
         'Bezel': {
-            image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=600&q=80',
-            caption: 'Bezel - Metal rim securely surrounds the diamond'
+            image: 'https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=600&q=80',
+            caption: 'Bezel Set Engagement Ring - Secure metal rim setting'
         },
         'Cathedral': {
-            image: 'https://images.unsplash.com/photo-1586104237516-5765e76a6fc0?w=600&q=80',
-            caption: 'Cathedral - Elegant arches rise to hold the center stone'
+            image: 'https://images.unsplash.com/photo-1544127054-3c94b78a9854?w=600&q=80',
+            caption: 'Cathedral Engagement Ring - Elegant arched setting'
         },
 
-        // Metals
+        // Metals - All engagement ring examples
         'Platinum': {
-            image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=600&q=80',
-            caption: 'Platinum - Most durable, naturally white'
+            image: 'https://images.pexels.com/photos/3266700/pexels-photo-3266700.jpeg?auto=compress&cs=tinysrgb&w=600',
+            caption: 'Platinum Engagement Ring - Naturally white, most durable'
         },
         'White Gold': {
-            image: 'https://images.unsplash.com/photo-1543294001-f7cd5d7fb516?w=600&q=80',
-            caption: 'White Gold - Classic bright white finish'
+            image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=600&q=80',
+            caption: 'White Gold Engagement Ring - Classic bright finish'
         },
         'Yellow Gold': {
-            image: 'https://images.unsplash.com/photo-1598560917505-59a3ad559071?w=600&q=80',
-            caption: 'Yellow Gold - Traditional warm golden tone'
+            image: 'https://images.pexels.com/photos/2849742/pexels-photo-2849742.jpeg?auto=compress&cs=tinysrgb&w=600',
+            caption: 'Yellow Gold Engagement Ring - Traditional warm tone'
         },
         'Rose Gold': {
-            image: 'https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?w=600&q=80',
-            caption: 'Rose Gold - Romantic pink hue, very trendy'
+            image: 'https://images.pexels.com/photos/3731256/pexels-photo-3731256.jpeg?auto=compress&cs=tinysrgb&w=600',
+            caption: 'Rose Gold Engagement Ring - Romantic pink hue'
         },
 
-        // Accents
+        // Accents - All engagement ring examples
         'Hidden Halo': {
-            image: 'https://images.unsplash.com/photo-1589674781759-c21c37956a44?w=600&q=80',
-            caption: 'Hidden Halo - Surprise sparkle under the stone'
+            image: 'https://images.unsplash.com/photo-1619119069152-a2b331eb392a?w=600&q=80',
+            caption: 'Hidden Halo Engagement Ring - Surprise sparkle underneath'
         },
         'Side Stones': {
-            image: 'https://images.unsplash.com/photo-1598560917505-59a3ad559071?w=600&q=80',
-            caption: 'Side Stones - Diamonds flanking the center'
+            image: 'https://images.pexels.com/photos/6624862/pexels-photo-6624862.jpeg?auto=compress&cs=tinysrgb&w=600',
+            caption: 'Side Stone Engagement Ring - Diamonds flanking center'
         },
         'Split Shank': {
-            image: 'https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?w=600&q=80',
-            caption: 'Split Shank - Band divides at the center stone'
+            image: 'https://images.unsplash.com/photo-1583292650898-7d22cd27ca6f?w=600&q=80',
+            caption: 'Split Shank Engagement Ring - Band divides elegantly'
         },
         'Milgrain': {
-            image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=600&q=80',
-            caption: 'Milgrain - Tiny beaded detail, vintage charm'
+            image: 'https://images.unsplash.com/photo-1609207131662-da80fbce3eef?w=600&q=80',
+            caption: 'Milgrain Engagement Ring - Vintage beaded detail'
         },
         'Filigree': {
-            image: 'https://images.unsplash.com/photo-1591209627710-d2427a94c82e?w=600&q=80',
-            caption: 'Filigree - Delicate metalwork patterns'
+            image: 'https://images.pexels.com/photos/4046568/pexels-photo-4046568.jpeg?auto=compress&cs=tinysrgb&w=600',
+            caption: 'Filigree Engagement Ring - Delicate metalwork patterns'
         }
     },
 
-    // Default placeholder image
+    // Default placeholder image - engagement ring
     DEFAULT_PREVIEW: {
-        image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=600&q=80',
-        caption: 'Tap any term to see an example'
+        image: 'https://images.pexels.com/photos/1150611/pexels-photo-1150611.jpeg?auto=compress&cs=tinysrgb&w=600',
+        caption: 'Tap any term to see engagement ring examples'
     },
 
     // LocalStorage keys
