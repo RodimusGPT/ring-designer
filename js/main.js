@@ -18,6 +18,7 @@ const app = {
     // Imported ring data
     importedRing: null,
     vendorListExpanded: false,
+    currentTab: 'import',
 
     /**
      * Initialize the application
@@ -133,18 +134,22 @@ const app = {
     // ============================================
 
     /**
-     * Setup vendor showcase with top vendor logos
+     * Setup vendor showcase with top vendor logos as clickable links
      */
     setupVendorShowcase() {
         if (!CONFIG.JEWELRY_VENDORS) return;
 
-        // Show top 6 vendors in the showcase
+        // Show top 6 vendors in the showcase as clickable links
         const topVendors = CONFIG.JEWELRY_VENDORS.slice(0, 6);
         const vendorLogos = document.getElementById('vendorLogos');
 
         if (vendorLogos) {
             vendorLogos.innerHTML = topVendors.map(vendor =>
-                `<span class="vendor-logo" title="${vendor.name}">${vendor.logo}</span>`
+                `<a href="https://${vendor.domain}" target="_blank" rel="noopener noreferrer"
+                    class="vendor-logo-link" title="Visit ${vendor.name}">
+                    <span class="vendor-logo-icon">${vendor.logo}</span>
+                    <span class="vendor-logo-name">${vendor.name}</span>
+                </a>`
             ).join('');
         }
 
@@ -160,10 +165,11 @@ const app = {
             const container = tiers[vendor.tier];
             if (container) {
                 container.innerHTML += `
-                    <div class="vendor-item" title="Supports ${vendor.domain}">
+                    <a href="https://${vendor.domain}" target="_blank" rel="noopener noreferrer"
+                       class="vendor-item" title="Visit ${vendor.name}">
                         <span class="vendor-item-logo">${vendor.logo}</span>
                         <span class="vendor-item-name">${vendor.name}</span>
-                    </div>
+                    </a>
                 `;
             }
         });
@@ -220,6 +226,33 @@ const app = {
                     : 'See all supported stores';
             }
         }
+    },
+
+    /**
+     * Switch between Import and Design tabs
+     */
+    switchTab(tab) {
+        this.currentTab = tab;
+
+        // Update tab buttons
+        const tabImport = document.getElementById('tabImport');
+        const tabDesign = document.getElementById('tabDesign');
+
+        if (tabImport && tabDesign) {
+            tabImport.classList.toggle('active', tab === 'import');
+            tabDesign.classList.toggle('active', tab === 'design');
+        }
+
+        // Update tab content visibility
+        const contentImport = document.getElementById('tabContentImport');
+        const contentDesign = document.getElementById('tabContentDesign');
+
+        if (contentImport && contentDesign) {
+            contentImport.classList.toggle('active', tab === 'import');
+            contentDesign.classList.toggle('active', tab === 'design');
+        }
+
+        console.log(`📑 Switched to ${tab} tab`);
     },
 
     /**
