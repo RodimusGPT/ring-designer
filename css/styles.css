@@ -1171,86 +1171,400 @@ img {
 }
 
 /* ========================================
-   Responsive Design
+   Responsive Design - Mobile First
    ======================================== */
+
+/* Tablet */
 @media (max-width: 768px) {
     .screen {
-        padding: var(--spacing-lg) var(--spacing-md);
-    }
-
-    .screen-title {
-        font-size: 2rem;
-    }
-
-    .landing-title {
-        font-size: 3rem;
-    }
-
-    .landing-subtitle {
-        font-size: 1.4rem;
-    }
-
-    .landing-description {
-        font-size: 1rem;
-    }
-
-    .choice-cards {
-        grid-template-columns: 1fr;
-    }
-
-    .gallery-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .designer-content {
-        grid-template-columns: 1fr;
-    }
-
-    .preview-actions {
-        flex-direction: column;
-    }
-
-    .btn {
-        min-width: auto;
-        width: 100%;
-    }
-}
-
-@media (max-width: 480px) {
-    .landing-title {
-        font-size: 2.5rem;
+        padding: var(--spacing-lg) var(--spacing-sm);
     }
 
     .screen-title {
         font-size: 1.8rem;
     }
 
+    .screen-subtitle {
+        font-size: 1rem;
+        margin-bottom: var(--spacing-lg);
+    }
+
+    /* Landing */
+    .landing-title {
+        font-size: 3.5rem;
+    }
+
+    .landing-subtitle {
+        font-size: 1.3rem;
+    }
+
+    .landing-description {
+        font-size: 1rem;
+        padding: 0 var(--spacing-sm);
+    }
+
+    /* Hide decorative flowers on mobile */
+    #landingScreen::before,
+    #landingScreen::after {
+        display: none;
+    }
+
+    /* Choice Cards */
+    .choice-cards {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+
+    .choice-card {
+        padding: var(--spacing-lg);
+    }
+
+    .choice-icon {
+        font-size: 3rem;
+    }
+
+    /* Gallery */
+    .gallery-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+
+    .ring-card-image {
+        height: 250px;
+    }
+
+    /* Designer */
+    .designer-content {
+        grid-template-columns: 1fr;
+    }
+
+    .initial-prompt {
+        padding: var(--spacing-lg);
+    }
+
+    /* Conversation UI */
+    .conversation-history {
+        gap: var(--spacing-md);
+    }
+
+    .message-prompt {
+        max-width: 90%;
+        font-size: 0.9rem;
+    }
+
+    .message-image img {
+        max-height: 300px;
+    }
+
+    /* Refinement */
+    .refinement-form {
+        flex-direction: column;
+    }
+
+    .refinement-form input {
+        width: 100%;
+    }
+
+    .btn-refine {
+        width: 100%;
+    }
+
+    .refinement-actions {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+
+    /* Preview */
+    .preview-actions {
+        flex-direction: column;
+    }
+
+    .preview-image-container {
+        padding: var(--spacing-md);
+    }
+
+    /* Buttons */
+    .btn {
+        min-width: auto;
+        width: 100%;
+        padding: 1rem 1.5rem;
+        font-size: 0.9rem;
+    }
+
+    /* Thank You */
+    .thankyou-icon {
+        font-size: 4rem;
+    }
+
     .thankyou-title {
         font-size: 2rem;
+    }
+
+    .thankyou-message {
+        font-size: 1rem;
+    }
+
+    .thankyou-ring-preview {
+        padding: var(--spacing-md);
+    }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .screen {
+        padding: var(--spacing-md) var(--spacing-sm);
+    }
+
+    .screen-title {
+        font-size: 1.5rem;
+    }
+
+    /* Landing - Mobile */
+    .landing-title {
+        font-size: 2.8rem;
+    }
+
+    .landing-subtitle {
+        font-size: 1.1rem;
+    }
+
+    .landing-description {
+        font-size: 0.95rem;
+        line-height: 1.7;
+    }
+
+    .landing-content {
+        padding: var(--spacing-sm);
+    }
+
+    /* Reduce blob sizes on mobile */
+    .landing-particles::before {
+        width: 200px;
+        height: 200px;
+    }
+
+    .landing-particles::after {
+        width: 180px;
+        height: 180px;
+    }
+
+    /* Choice Cards - Mobile */
+    .choice-card {
+        padding: var(--spacing-md);
+    }
+
+    .choice-card h3 {
+        font-size: 1.3rem;
+    }
+
+    .choice-card p {
+        font-size: 0.9rem;
+    }
+
+    .choice-icon {
+        font-size: 2.5rem;
+    }
+
+    /* Gallery - Mobile */
+    .ring-card-image {
+        height: 220px;
+    }
+
+    .ring-card-title {
+        font-size: 1.1rem;
+    }
+
+    .ring-card-description {
+        font-size: 0.85rem;
+    }
+
+    /* Designer Form - Mobile */
+    .initial-prompt {
+        padding: var(--spacing-md);
+    }
+
+    .designer-form label {
+        font-size: 0.95rem;
+    }
+
+    .designer-form textarea {
+        padding: var(--spacing-sm);
+        font-size: 0.95rem;
+        min-height: 100px;
     }
 
     /* Inline Ring Guide - Mobile */
     .inline-ring-guide {
         padding: var(--spacing-sm);
+        margin-bottom: var(--spacing-md);
     }
 
     .guide-intro {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
     }
 
     .guide-row {
         flex-direction: column;
         align-items: flex-start;
-        gap: 0.3rem;
+        gap: 0.4rem;
+        margin-bottom: 0.6rem;
+        padding-bottom: 0.6rem;
     }
 
     .guide-label {
         min-width: auto;
-        margin-bottom: 0.2rem;
+        margin-bottom: 0.15rem;
+        font-size: 0.65rem;
+    }
+
+    .guide-chips {
+        gap: 0.3rem;
     }
 
     .guide-chip {
         font-size: 0.65rem;
-        padding: 0.2rem 0.5rem;
+        padding: 0.3rem 0.6rem;
+        border-width: 1.5px;
+    }
+
+    /* Example Prompts - Mobile */
+    .example-prompts {
+        margin-bottom: var(--spacing-md);
+    }
+
+    .example-label {
+        font-size: 0.85rem;
+    }
+
+    .prompt-chips {
+        gap: var(--spacing-xs);
+    }
+
+    .chip {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+    }
+
+    /* Conversation - Mobile */
+    .message-image {
+        padding: var(--spacing-sm);
+    }
+
+    .message-image img {
+        max-height: 250px;
+    }
+
+    .message-iteration {
+        font-size: 0.7rem;
+    }
+
+    /* Refinement - Mobile */
+    .refinement-input {
+        padding: var(--spacing-md);
+    }
+
+    .refinement-form input {
+        font-size: 0.95rem;
+        padding: var(--spacing-sm);
+    }
+
+    /* Preview - Mobile */
+    .preview-details h3 {
+        font-size: 1.4rem;
+    }
+
+    .preview-details p {
+        font-size: 1rem;
+    }
+
+    /* Thank You - Mobile */
+    .thankyou-icon {
+        font-size: 3.5rem;
+    }
+
+    .thankyou-title {
+        font-size: 1.6rem;
+    }
+
+    .thankyou-message {
+        font-size: 0.95rem;
+        line-height: 1.8;
+    }
+
+    .thankyou-ring-preview img {
+        max-height: 280px;
+    }
+
+    .thankyou-note {
+        font-size: 1rem;
+    }
+
+    .signature {
+        font-size: 1.4rem;
+    }
+
+    /* Hide floating decorations on small mobile */
+    #thankYouScreen::before,
+    #thankYouScreen::after {
+        display: none;
+    }
+}
+
+/* Extra small phones */
+@media (max-width: 360px) {
+    .landing-title {
+        font-size: 2.2rem;
+    }
+
+    .landing-subtitle {
+        font-size: 1rem;
+    }
+
+    .screen-title {
+        font-size: 1.3rem;
+    }
+
+    .choice-card h3 {
+        font-size: 1.15rem;
+    }
+
+    .guide-chip {
+        font-size: 0.6rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .btn {
+        padding: 0.85rem 1.2rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* Touch-friendly adjustments */
+@media (hover: none) and (pointer: coarse) {
+    .guide-chip {
+        min-height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .chip {
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+    }
+
+    .btn {
+        min-height: 48px;
+    }
+
+    .ring-card {
+        /* Disable hover effects on touch */
+        transform: none !important;
+    }
+
+    .ring-card:active {
+        transform: scale(0.98) !important;
     }
 }
