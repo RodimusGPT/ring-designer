@@ -133,6 +133,101 @@ const FalAPI = {
     },
 
     /**
+     * Import ring from external vendor URL
+     * @param {string} url - Ring product page URL
+     * @returns {Promise<object>} - Imported ring data with images and metadata
+     */
+    async importFromUrl(url) {
+        const apiUrl = CONFIG.API_URL;
+
+        if (!apiUrl || apiUrl === 'YOUR_RENDER_URL') {
+            throw new Error('Backend API not configured');
+        }
+
+        console.log(`🔗 Importing ring from: ${url.substring(0, 50)}...`);
+
+        try {
+            const response = await fetch(`${apiUrl}/api/import-ring`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url })
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                console.error('Import failed:', result);
+                return {
+                    success: false,
+                    error: result.error,
+                    message: result.message || 'Could not import ring from this URL'
+                };
+            }
+
+            console.log(`✅ Import successful: ${result.metadata?.title || 'Ring'}`);
+
+            return {
+                success: true,
+                vendor: result.vendor,
+                url: result.url,
+                images: result.images || [],
+                metadata: result.metadata || {}
+            };
+
+        } catch (error) {
+            console.error('Import error:', error);
+            return {
+                success: false,
+                error: error.message,
+                message: 'Network error. Please check your connection and try again.'
+            };
+        }
+    },
+
+    /**
+     * Validate URL format and check if it's from a supported vendor
+     * @param {string} url - URL to validate
+     * @returns {object} - Validation result with vendor info
+     */
+    validateUrl(url) {
+        if (!url || !url.trim()) {
+            return {
+                valid: false,
+                message: 'Please enter a URL'
+            };
+        }
+
+        try {
+            const parsed = new URL(url.trim());
+            const hostname = parsed.hostname.toLowerCase();
+
+            // Check if it's a supported vendor
+            const vendor = CONFIG.JEWELRY_VENDORS?.find(v =>
+                hostname.includes(v.domain.replace('www.', ''))
+            );
+
+            if (vendor) {
+                return {
+                    valid: true,
+                    vendor: vendor,
+                    message: `Importing from ${vendor.name}...`
+                };
+            }
+
+            return {
+                valid: false,
+                message: 'This store is not yet supported. Try major retailers like Tiffany, Blue Nile, or James Allen.'
+            };
+
+        } catch {
+            return {
+                valid: false,
+                message: 'Please enter a valid URL (e.g., https://www.tiffany.com/...)'
+            };
+        }
+    },
+
+    /**
      * Validate user description before generation
      * @param {string} description - User's ring description
      * @returns {object} - Validation result
