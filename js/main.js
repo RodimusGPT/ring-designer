@@ -33,8 +33,8 @@ const app = {
         // Setup ring terminology guide with live preview
         this.setupRingGuide();
 
-        // Setup URL input handler for direct image imports
-        this.setupUrlInput();
+        // Setup file upload handler
+        this.setupFileUpload();
 
         // Load cached term previews from Firebase
         await this.loadCachedPreviews();
@@ -135,31 +135,6 @@ const app = {
     // ============================================
 
     /**
-     * Setup URL input for direct image URL import
-     */
-    setupUrlInput() {
-        const urlInput = document.getElementById('ringUrlInput');
-
-        if (urlInput) {
-            // Handle Enter key to import
-            urlInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    this.importImageUrl();
-                }
-            });
-
-            // Clear status on input
-            urlInput.addEventListener('input', () => {
-                this.showUrlStatus('', '');
-            });
-        }
-
-        // Setup file upload
-        this.setupFileUpload();
-    },
-
-    /**
      * Setup file upload handler
      */
     setupFileUpload() {
@@ -181,14 +156,14 @@ const app = {
     async handleFileUpload(file) {
         // Validate file type
         if (!file.type.startsWith('image/')) {
-            this.showUrlStatus('Please select an image file', 'error');
+            alert('Please select an image file');
             return;
         }
 
         // Validate file size (max 10MB)
         const maxSize = 10 * 1024 * 1024;
         if (file.size > maxSize) {
-            this.showUrlStatus('Image is too large. Please use an image under 10MB.', 'error');
+            alert('Image is too large. Please use an image under 10MB.');
             return;
         }
 
@@ -205,7 +180,7 @@ const app = {
 
         } catch (error) {
             console.error('Upload error:', error);
-            this.showUrlStatus('Could not process image. Please try again.', 'error');
+            alert('Could not process image. Please try again.');
         } finally {
             this.showLoading(false);
             // Clear file input for future uploads
@@ -229,68 +204,6 @@ const app = {
     // ============================================
     // REFERENCE IMAGE SECTION
     // ============================================
-
-    /**
-     * Import reference image from URL
-     */
-    async importReferenceUrl() {
-        const urlInput = document.getElementById('ringUrlInput');
-        const url = urlInput?.value.trim();
-
-        if (!url) {
-            this.showUrlStatus('Please paste an image URL', 'error');
-            return;
-        }
-
-        // Basic URL validation
-        try {
-            new URL(url);
-        } catch {
-            this.showUrlStatus('Please enter a valid URL', 'error');
-            return;
-        }
-
-        // Check if it looks like an image URL
-        const imageExtensions = /\.(jpg|jpeg|png|gif|webp|avif|bmp|svg)(\?.*)?$/i;
-        const imagePatterns = /\/(images|photos|products|media|cdn|static|dw|assets)\//i;
-        const isLikelyImage = imageExtensions.test(url) || imagePatterns.test(url) ||
-            url.includes('cloudinary') || url.includes('imgix') || url.includes('scene7');
-
-        if (!isLikelyImage) {
-            this.showUrlStatus('This doesn\'t look like an image URL. Try right-clicking an image and selecting "Copy image address"', 'error');
-            return;
-        }
-
-        this.showLoading(true);
-        this.showUrlStatus('Loading image...', 'loading');
-
-        // Test if the image loads
-        const img = new Image();
-
-        try {
-            await new Promise((resolve, reject) => {
-                img.onload = resolve;
-                img.onerror = () => reject(new Error('Image failed to load'));
-                img.src = url;
-                setTimeout(() => reject(new Error('Image took too long to load')), 10000);
-            });
-
-            console.log('🔗 Reference image loaded:', url);
-
-            // Set as reference image
-            this.setReferenceImage(url, new URL(url).hostname);
-            this.showUrlStatus('', '');
-
-            // Clear URL input
-            urlInput.value = '';
-
-        } catch (error) {
-            console.error('Image load error:', error);
-            this.showUrlStatus('Could not load this image. Try saving it first and uploading.', 'error');
-        } finally {
-            this.showLoading(false);
-        }
-    },
 
     /**
      * Set reference image and update UI
@@ -343,17 +256,6 @@ const app = {
         if (previewCaption) previewCaption.style.display = 'none';
 
         console.log('🗑️ Reference cleared');
-    },
-
-    /**
-     * Show URL status message
-     */
-    showUrlStatus(message, type) {
-        const urlStatus = document.getElementById('urlStatus');
-        if (urlStatus) {
-            urlStatus.textContent = message;
-            urlStatus.className = `url-status ${type}`;
-        }
     },
 
     /**

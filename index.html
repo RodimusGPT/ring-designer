@@ -117,33 +117,18 @@
 
                                     <!-- Reference Options (shown when no image) -->
                                     <div class="inline-reference-options" id="referenceOptions">
-                                        <div class="reference-header">
-                                            <span class="reference-icon">📷</span>
-                                            <span class="reference-title">Add inspiration photo</span>
-                                        </div>
-                                        <div class="reference-inputs">
-                                            <label class="btn-upload" for="ringFileInput">
-                                                Upload
-                                                <input
-                                                    type="file"
-                                                    id="ringFileInput"
-                                                    accept="image/*"
-                                                    class="file-input-hidden"
-                                                >
-                                            </label>
-                                            <div class="url-input-group">
-                                                <input
-                                                    type="url"
-                                                    id="ringUrlInput"
-                                                    placeholder="paste image URL"
-                                                    autocomplete="off"
-                                                >
-                                                <button class="btn-url-add" onclick="app.importReferenceUrl()">Add</button>
-                                            </div>
-                                        </div>
-                                        <div class="url-status" id="urlStatus"></div>
+                                        <label class="btn-upload-block" for="ringFileInput">
+                                            <span class="upload-icon">📷</span>
+                                            <span class="upload-text">Upload inspiration photo</span>
+                                            <input
+                                                type="file"
+                                                id="ringFileInput"
+                                                accept="image/*"
+                                                class="file-input-hidden"
+                                            >
+                                        </label>
                                         <div class="browse-links">
-                                            <span class="browse-label">Browse:</span>
+                                            <span class="browse-label">Browse for ideas:</span>
                                             <a href="https://www.tiffany.com/engagement/engagement-rings/" target="_blank" rel="noopener">Tiffany</a>
                                             <span class="browse-dot">·</span>
                                             <a href="https://www.cartier.com/en-us/jewelry/engagement-rings/" target="_blank" rel="noopener">Cartier</a>
