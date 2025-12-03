@@ -961,54 +961,80 @@ img {
     white-space: nowrap;
 }
 
-.guide-chip:hover {
+.guide-chip:hover,
+.guide-chip:focus {
     background: linear-gradient(135deg, var(--hot-pink), var(--coral));
-    color: white;
+    color: white !important;
     border-color: var(--hot-pink);
     transform: scale(1.08);
     box-shadow: 0 4px 12px rgba(233, 30, 140, 0.3);
+    outline: none;
 }
 
 .guide-chip:active {
     transform: scale(0.95);
+    background: linear-gradient(135deg, var(--hot-pink), var(--coral));
+    color: white !important;
 }
 
-/* Alternate chip colors by row */
+/* Selected state - persistent after click */
+.guide-chip.selected {
+    background: linear-gradient(135deg, var(--hot-pink), var(--coral));
+    color: white !important;
+    border-color: var(--hot-pink);
+    box-shadow: 0 2px 8px rgba(233, 30, 140, 0.4);
+}
+
+/* Alternate chip colors by row - Setting */
 .guide-row:nth-child(2) .guide-chip {
     border-color: var(--coral);
     color: var(--coral);
 }
-.guide-row:nth-child(2) .guide-chip:hover {
+.guide-row:nth-child(2) .guide-chip:hover,
+.guide-row:nth-child(2) .guide-chip:focus,
+.guide-row:nth-child(2) .guide-chip.selected {
     background: linear-gradient(135deg, var(--coral), var(--flamingo));
     border-color: var(--coral);
+    color: white !important;
 }
 
+/* Metal */
 .guide-row:nth-child(3) .guide-chip {
     border-color: var(--turquoise);
     color: var(--turquoise);
 }
-.guide-row:nth-child(3) .guide-chip:hover {
+.guide-row:nth-child(3) .guide-chip:hover,
+.guide-row:nth-child(3) .guide-chip:focus,
+.guide-row:nth-child(3) .guide-chip.selected {
     background: linear-gradient(135deg, var(--turquoise), var(--ocean-blue));
     border-color: var(--turquoise);
+    color: white !important;
 }
 
+/* Accents */
 .guide-row:nth-child(4) .guide-chip {
     border-color: var(--palm-green);
     color: var(--palm-green);
 }
-.guide-row:nth-child(4) .guide-chip:hover {
+.guide-row:nth-child(4) .guide-chip:hover,
+.guide-row:nth-child(4) .guide-chip:focus,
+.guide-row:nth-child(4) .guide-chip.selected {
     background: linear-gradient(135deg, var(--palm-green), var(--ocean-blue));
     border-color: var(--palm-green);
+    color: white !important;
 }
 
+/* Row 5 (if used) */
 .guide-row:nth-child(5) .guide-chip {
     border-color: var(--sunny-gold);
     color: #B8860B;
 }
-.guide-row:nth-child(5) .guide-chip:hover {
+.guide-row:nth-child(5) .guide-chip:hover,
+.guide-row:nth-child(5) .guide-chip:focus,
+.guide-row:nth-child(5) .guide-chip.selected {
     background: linear-gradient(135deg, var(--sunny-gold), var(--coral));
     border-color: var(--sunny-gold);
-    color: white;
+    color: white !important;
 }
 
 /* ========================================

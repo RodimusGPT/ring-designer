@@ -372,10 +372,23 @@ const app = {
 
     /**
      * Insert term into active input field AND show live preview
+     * Toggles selection state - click again to remove
      */
     insertTerm(term) {
         const textarea = document.getElementById('ringDescription');
         const refinementInput = document.getElementById('refinementText');
+
+        // Find the clicked chip button
+        const chips = document.querySelectorAll('.guide-chip');
+        let clickedChip = null;
+        chips.forEach(chip => {
+            if (chip.textContent.trim() === term) {
+                clickedChip = chip;
+            }
+        });
+
+        // Check if already selected (toggle behavior)
+        const isSelected = clickedChip?.classList.contains('selected');
 
         // Determine which field is active or visible
         const activeField = refinementInput && refinementInput.offsetParent !== null
@@ -383,9 +396,22 @@ const app = {
             : textarea;
 
         if (activeField) {
-            const currentValue = activeField.value;
-            const separator = currentValue.length > 0 && !currentValue.endsWith(' ') ? ', ' : '';
-            activeField.value = currentValue + separator + term.toLowerCase();
+            if (isSelected) {
+                // Remove term from text
+                const termLower = term.toLowerCase();
+                let value = activeField.value;
+                // Remove with various separators
+                value = value.replace(new RegExp(`,\\s*${termLower}`, 'gi'), '');
+                value = value.replace(new RegExp(`${termLower},\\s*`, 'gi'), '');
+                value = value.replace(new RegExp(`^${termLower}$`, 'gi'), '');
+                activeField.value = value.trim();
+            } else {
+                // Add term to text
+                const currentValue = activeField.value;
+                const separator = currentValue.length > 0 && !currentValue.endsWith(' ') ? ', ' : '';
+                activeField.value = currentValue + separator + term.toLowerCase();
+            }
+
             activeField.focus();
 
             // Update char counter if textarea
@@ -394,8 +420,15 @@ const app = {
             }
         }
 
-        // Show live preview for this term
-        this.showTermPreview(term);
+        // Toggle selected state on chip
+        if (clickedChip) {
+            clickedChip.classList.toggle('selected');
+        }
+
+        // Show live preview for this term (only when selecting, not deselecting)
+        if (!isSelected) {
+            this.showTermPreview(term);
+        }
     },
 
     /**
