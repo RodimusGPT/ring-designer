@@ -1717,6 +1717,66 @@ img {
     color: #555;
 }
 
+/* Vendor Links Section */
+.vendor-links-section {
+    margin-bottom: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(0, 206, 209, 0.05));
+    border-radius: var(--radius-lg);
+    border: 1px dashed rgba(0, 206, 209, 0.4);
+}
+
+.vendor-links-title {
+    font-size: 0.85rem;
+    color: var(--turquoise);
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: var(--spacing-sm);
+}
+
+.vendor-links-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-sm);
+}
+
+.vendor-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--white);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    border: 2px solid transparent;
+    transition: all var(--transition);
+    min-width: 80px;
+}
+
+.vendor-link:hover {
+    border-color: var(--turquoise);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 206, 209, 0.2);
+}
+
+.vendor-link-icon {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.vendor-link-name {
+    font-size: 0.7rem;
+    color: #555;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.vendor-link:hover .vendor-link-name {
+    color: var(--turquoise);
+}
+
 /* Import Divider */
 .import-divider {
     display: flex;
@@ -2423,6 +2483,32 @@ img {
     .btn-show-all-vendors {
         font-size: 0.75rem;
         padding: 0.4rem 0.8rem;
+    }
+
+    /* Vendor Links - Mobile */
+    .vendor-links-section {
+        padding: var(--spacing-xs) var(--spacing-sm);
+    }
+
+    .vendor-links-title {
+        font-size: 0.75rem;
+    }
+
+    .vendor-links-grid {
+        gap: 0.4rem;
+    }
+
+    .vendor-link {
+        padding: 0.4rem 0.5rem;
+        min-width: 70px;
+    }
+
+    .vendor-link-icon {
+        font-size: 1.2rem;
+    }
+
+    .vendor-link-name {
+        font-size: 0.6rem;
     }
 
     .vendor-item {
