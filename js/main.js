@@ -373,22 +373,32 @@ const app = {
     /**
      * Insert term into active input field AND show live preview
      * Toggles selection state - click again to remove
+     * Mutual exclusivity: Diamond/Setting/Metal allow only ONE selection each
+     * Accents allow multiple selections (can combine features)
      */
     insertTerm(term) {
         const textarea = document.getElementById('ringDescription');
         const refinementInput = document.getElementById('refinementText');
 
-        // Find the clicked chip button
+        // Find the clicked chip button and its category container
         const chips = document.querySelectorAll('.guide-chip');
         let clickedChip = null;
+        let categoryContainer = null;
+
         chips.forEach(chip => {
             if (chip.textContent.trim() === term) {
                 clickedChip = chip;
+                categoryContainer = chip.closest('.guide-chips');
             }
         });
 
         // Check if already selected (toggle behavior)
         const isSelected = clickedChip?.classList.contains('selected');
+
+        // Determine if this category allows multiple selections
+        // Accents (guideAccents) allows multiple, others are mutually exclusive
+        const categoryId = categoryContainer?.id;
+        const allowMultiple = categoryId === 'guideAccents';
 
         // Determine which field is active or visible
         const activeField = refinementInput && refinementInput.offsetParent !== null
@@ -396,11 +406,26 @@ const app = {
             : textarea;
 
         if (activeField) {
+            // If NOT allowing multiple and NOT already selected, deselect others in same category first
+            if (!allowMultiple && !isSelected && categoryContainer) {
+                const siblingsSelected = categoryContainer.querySelectorAll('.guide-chip.selected');
+                siblingsSelected.forEach(sibling => {
+                    // Remove sibling's term from text
+                    const siblingTerm = sibling.textContent.trim().toLowerCase();
+                    let value = activeField.value;
+                    value = value.replace(new RegExp(`,\\s*${siblingTerm}`, 'gi'), '');
+                    value = value.replace(new RegExp(`${siblingTerm},\\s*`, 'gi'), '');
+                    value = value.replace(new RegExp(`^${siblingTerm}$`, 'gi'), '');
+                    activeField.value = value.trim();
+                    // Deselect visually
+                    sibling.classList.remove('selected');
+                });
+            }
+
             if (isSelected) {
-                // Remove term from text
+                // Remove term from text (deselecting)
                 const termLower = term.toLowerCase();
                 let value = activeField.value;
-                // Remove with various separators
                 value = value.replace(new RegExp(`,\\s*${termLower}`, 'gi'), '');
                 value = value.replace(new RegExp(`${termLower},\\s*`, 'gi'), '');
                 value = value.replace(new RegExp(`^${termLower}$`, 'gi'), '');
