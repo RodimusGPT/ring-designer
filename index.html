@@ -43,7 +43,7 @@
         <div class="container">
             <button class="btn-back" onclick="app.showScreen('landingScreen')">← Back</button>
             <h2 class="screen-title">Design Your Dream Ring</h2>
-            <p class="screen-subtitle">Tap terms to see examples and build your perfect description</p>
+            <p class="screen-subtitle">Describe what you love, add inspiration if you have it, then watch the magic happen ✨</p>
 
             <!-- Designer Layout: Preview + Form -->
             <div class="designer-layout">
@@ -59,108 +59,22 @@
                     <div class="preview-caption" id="previewCaption"></div>
                 </div>
 
-                <!-- Form Panel -->
+                <!-- Unified Design Form Panel -->
                 <div class="designer-form-panel">
-                    <!-- Tab Navigation -->
-                    <div class="designer-tabs">
-                        <button class="tab-btn active" onclick="app.switchTab('import')" id="tabImport">
-                            <span class="tab-icon">🔗</span>
-                            <span class="tab-label">Import Ring</span>
-                        </button>
-                        <button class="tab-btn" onclick="app.switchTab('design')" id="tabDesign">
-                            <span class="tab-icon">✨</span>
-                            <span class="tab-label">Design Your Own</span>
-                        </button>
-                    </div>
+                    <!-- Initial Design Flow (shown before first generation) -->
+                    <div class="design-flow" id="designFlow">
 
-                    <!-- Tab Content: Import -->
-                    <div class="tab-content active" id="tabContentImport">
-                    <!-- URL Import Section -->
-                    <div class="url-import-section" id="urlImportSection">
-                        <div class="import-header">
-                            <h3 class="import-title">Import a Ring You Love</h3>
-                            <p class="import-subtitle">Found a ring online? Paste the image URL directly!</p>
-                        </div>
-
-                        <div class="import-instructions">
-                            <div class="instruction-step">
-                                <span class="step-number">1</span>
-                                <span>Find a ring image on any website</span>
+                        <!-- Step 1: Describe Your Vision -->
+                        <div class="flow-section">
+                            <div class="flow-header">
+                                <span class="flow-step">1</span>
+                                <h3 class="flow-title">Describe Your Vision</h3>
                             </div>
-                            <div class="instruction-step">
-                                <span class="step-number">2</span>
-                                <span>Right-click the image → "Copy image address"</span>
-                            </div>
-                            <div class="instruction-step">
-                                <span class="step-number">3</span>
-                                <span>Paste the URL below</span>
-                            </div>
-                        </div>
 
-                        <div class="url-input-container">
-                            <div class="url-input-wrapper">
-                                <span class="url-icon">🖼️</span>
-                                <input
-                                    type="url"
-                                    id="ringUrlInput"
-                                    placeholder="Paste image URL (ends in .jpg, .png, .webp...)"
-                                    autocomplete="off"
-                                >
-                                <button class="btn-import" onclick="app.importImageUrl()" id="importBtn">
-                                    Import
-                                </button>
-                            </div>
-                            <div class="url-status" id="urlStatus"></div>
-                        </div>
-
-                        <!-- Quick Links to Luxury Vendors -->
-                        <div class="vendor-quick-links">
-                            <p class="vendor-links-label">Browse luxury jewelers:</p>
-                            <div class="vendor-links-row">
-                                <a href="https://www.tiffany.com/engagement/engagement-rings/" target="_blank" rel="noopener" class="vendor-link">💎 Tiffany & Co.</a>
-                                <a href="https://www.cartier.com/en-us/jewelry/engagement-rings/" target="_blank" rel="noopener" class="vendor-link">👑 Cartier</a>
-                                <a href="https://www.harrywinston.com/en/fine-jewelry/engagement-rings" target="_blank" rel="noopener" class="vendor-link">✨ Harry Winston</a>
-                                <a href="https://www.vancleefarpels.com/us/en/collections/engagement/diamond-sets.html?category=ring" target="_blank" rel="noopener" class="vendor-link">🌸 Van Cleef</a>
-                                <a href="https://www.graff.com/us-en/engagement-bridal/engagement/engagement-rings/?cgid=bridal_engagement_engagementrings" target="_blank" rel="noopener" class="vendor-link">💫 Graff</a>
-                            </div>
-                        </div>
-
-                        <div class="import-divider">
-                            <span>or design your own below</span>
-                        </div>
-                    </div>
-
-                    <!-- Imported Ring Preview (hidden initially) -->
-                    <div class="imported-ring-preview" id="importedRingPreview" style="display: none;">
-                        <div class="imported-ring-header">
-                            <span class="imported-label">Your Imported Ring</span>
-                            <button class="btn-close-import" onclick="app.clearImport()">×</button>
-                        </div>
-                        <div class="imported-ring-image-container">
-                            <img id="importedRingImage" src="" alt="Imported ring" />
-                        </div>
-                        <div class="imported-ring-actions">
-                            <button class="btn btn-primary" onclick="app.selectImportedRing()">
-                                This Is The One! 💕
-                            </button>
-                            <button class="btn btn-secondary" onclick="app.useAsInspiration()">
-                                Use as Inspiration
-                            </button>
-                        </div>
-                    </div>
-                    </div><!-- End Tab Content: Import -->
-
-                    <!-- Tab Content: Design -->
-                    <div class="tab-content" id="tabContentDesign">
-                    <!-- Conversation Container -->
-                    <div class="design-conversation" id="designConversation">
-                        <!-- Initial prompt area (shown when no designs yet) -->
-                        <div class="initial-prompt" id="initialPrompt">
                             <div class="designer-form">
-                                <label for="ringDescription">Describe your dream engagement ring:</label>
                                 <textarea
                                     id="ringDescription"
-                                    placeholder="Tap the terms below to build your description, or type freely..."
+                                    placeholder="What does your dream ring look like? Tap keywords below or describe freely..."
                                     maxlength="500"
                                     rows="3"
                                 ></textarea>
@@ -170,7 +84,7 @@
 
                                 <!-- Interactive Ring Terminology Guide -->
                                 <div class="inline-ring-guide" id="ringGuide">
-                                    <p class="guide-intro">💎 Tap to see examples & add to description:</p>
+                                    <p class="guide-intro">💎 Tap to explore & add to your description:</p>
 
                                     <div class="guide-row">
                                         <span class="guide-label">Diamond:</span>
@@ -192,25 +106,97 @@
                                         <div class="guide-chips" id="guideAccents"></div>
                                     </div>
                                 </div>
-
-                                <button class="btn btn-primary" onclick="app.generateRing()" id="generateBtn">
-                                    Create My Ring ✨
-                                </button>
                             </div>
                         </div>
 
-                        <!-- Conversation History (shown after first generation) -->
-                        <div class="conversation-history" id="conversationHistory" style="display: none;">
+                        <!-- Step 2: Add Reference Image (Optional, Collapsible) -->
+                        <div class="flow-section optional-section">
+                            <div class="flow-header collapsible" onclick="app.toggleReferenceSection()">
+                                <span class="flow-step optional">2</span>
+                                <h3 class="flow-title">Add Reference Image <span class="optional-tag">(optional)</span></h3>
+                                <span class="collapse-icon" id="referenceCollapseIcon">+</span>
+                            </div>
+
+                            <div class="reference-section" id="referenceSection" style="display: none;">
+                                <p class="reference-hint">Have a ring you love? Add it as inspiration!</p>
+
+                                <!-- Reference Image Preview (when added) -->
+                                <div class="reference-preview" id="referencePreview" style="display: none;">
+                                    <div class="reference-image-container">
+                                        <img id="referenceImage" src="" alt="Reference ring">
+                                        <button class="btn-remove-reference" onclick="app.clearReference()">×</button>
+                                    </div>
+                                    <span class="reference-label">Reference added ✓</span>
+                                </div>
+
+                                <!-- Add Reference Options (when no reference) -->
+                                <div class="reference-options" id="referenceOptions">
+                                    <!-- Upload Option -->
+                                    <div class="upload-dropzone compact" id="uploadDropzone">
+                                        <input
+                                            type="file"
+                                            id="ringFileInput"
+                                            accept="image/*"
+                                            class="file-input-hidden"
+                                        >
+                                        <div class="dropzone-content">
+                                            <span class="upload-icon">📷</span>
+                                            <p class="upload-text">Upload a photo</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- URL Input -->
+                                    <div class="url-input-compact">
+                                        <div class="url-input-wrapper">
+                                            <input
+                                                type="url"
+                                                id="ringUrlInput"
+                                                placeholder="Or paste image URL..."
+                                                autocomplete="off"
+                                            >
+                                            <button class="btn-import-small" onclick="app.importReferenceUrl()">Add</button>
+                                        </div>
+                                        <div class="url-status" id="urlStatus"></div>
+                                    </div>
+
+                                    <!-- Quick Links -->
+                                    <div class="vendor-quick-links compact">
+                                        <p class="vendor-links-label">Browse for inspiration:</p>
+                                        <div class="vendor-links-row">
+                                            <a href="https://www.tiffany.com/engagement/engagement-rings/" target="_blank" rel="noopener" class="vendor-link">💎 Tiffany</a>
+                                            <a href="https://www.cartier.com/en-us/jewelry/engagement-rings/" target="_blank" rel="noopener" class="vendor-link">👑 Cartier</a>
+                                            <a href="https://www.harrywinston.com/en/fine-jewelry/engagement-rings" target="_blank" rel="noopener" class="vendor-link">✨ Harry Winston</a>
+                                            <a href="https://www.vancleefarpels.com/us/en/collections/engagement/diamond-sets.html?category=ring" target="_blank" rel="noopener" class="vendor-link">🌸 Van Cleef</a>
+                                            <a href="https://www.graff.com/us-en/engagement-bridal/engagement/engagement-rings/?cgid=bridal_engagement_engagementrings" target="_blank" rel="noopener" class="vendor-link">💫 Graff</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Generate Button -->
+                        <div class="generate-section">
+                            <button class="btn btn-primary btn-generate" onclick="app.generateRing()" id="generateBtn">
+                                Create My Ring ✨
+                            </button>
+                            <p class="generate-hint">AI will create a unique ring based on your vision</p>
+                        </div>
+                    </div>
+
+                    <!-- Conversation Mode (shown after first generation) -->
+                    <div class="conversation-mode" id="conversationMode" style="display: none;">
+                        <!-- Conversation History -->
+                        <div class="conversation-history" id="conversationHistory">
                             <!-- Messages will be inserted here -->
                         </div>
 
-                        <!-- Refinement Input (shown after first generation) -->
-                        <div class="refinement-input" id="refinementInput" style="display: none;">
+                        <!-- Refinement Input -->
+                        <div class="refinement-input" id="refinementInput">
                             <div class="refinement-form">
                                 <input
                                     type="text"
                                     id="refinementText"
-                                    placeholder="Refine your design: 'make the band thinner' or 'add sapphire side stones'..."
+                                    placeholder="Refine: 'make it more delicate' or 'add sapphire accents'..."
                                     maxlength="200"
                                 >
                                 <button class="btn btn-primary btn-refine" onclick="app.refineDesign()">
@@ -221,13 +207,36 @@
                                 <button class="btn btn-secondary" onclick="app.selectCurrentDesign()">
                                     I Love This! 💕
                                 </button>
+                                <button class="btn btn-save-collection" onclick="app.saveCurrentToCollection()">
+                                    Save to Collection 💎
+                                </button>
                                 <button class="btn-reset" onclick="app.startOver()">
                                     Start Over
                                 </button>
                             </div>
                         </div>
                     </div>
-                    </div><!-- End Tab Content: Design -->
+                </div>
+            </div>
+
+            <!-- My Collection Section -->
+            <div class="my-collection-section" id="myCollectionSection">
+                <div class="collection-header">
+                    <h3 class="collection-title">💎 My Collection</h3>
+                    <button class="btn-toggle-collection" onclick="app.toggleCollection()" id="toggleCollectionBtn">
+                        <span id="collectionToggleText">Show</span>
+                        <span class="collection-count" id="collectionCount">(0)</span>
+                    </button>
+                </div>
+
+                <div class="collection-gallery" id="collectionGallery" style="display: none;">
+                    <div class="collection-grid" id="collectionGrid">
+                        <!-- Rings will be dynamically inserted here -->
+                    </div>
+                    <div class="collection-empty" id="collectionEmpty">
+                        <span class="empty-icon">💍</span>
+                        <p>No rings saved yet. Generate or import rings and save them to compare!</p>
+                    </div>
                 </div>
             </div>
         </div>

@@ -15,10 +15,12 @@ const app = {
     termPreviewCache: {},
     termGenerating: {}, // Track which terms are currently generating
 
-    // Imported ring data
-    importedRing: null,
-    vendorListExpanded: false,
-    currentTab: 'import',
+    // Reference image for AI generation
+    referenceImage: null,  // {imageUrl, source}
+    referenceSectionExpanded: false,
+
+    // Saved ring collection
+    savedRings: [],  // Array of {id, imageUrl, prompt, type, timestamp, isTheOne}
 
     /**
      * Initialize the application
@@ -37,6 +39,9 @@ const app = {
 
         // Load cached term previews from Firebase
         await this.loadCachedPreviews();
+
+        // Load saved ring collection from Firebase
+        await this.loadCollection();
 
         // Check if there's a saved design
         this.checkSavedDesign();
@@ -150,40 +155,136 @@ const app = {
                 this.showUrlStatus('', '');
             });
         }
+
+        // Setup file upload
+        this.setupFileUpload();
     },
 
     /**
-     * Switch between Import and Design tabs
+     * Setup file upload with drag and drop support
      */
-    switchTab(tab) {
-        this.currentTab = tab;
+    setupFileUpload() {
+        const dropzone = document.getElementById('uploadDropzone');
+        const fileInput = document.getElementById('ringFileInput');
 
-        // Update tab buttons
-        const tabImport = document.getElementById('tabImport');
-        const tabDesign = document.getElementById('tabDesign');
+        if (!dropzone || !fileInput) return;
 
-        if (tabImport && tabDesign) {
-            tabImport.classList.toggle('active', tab === 'import');
-            tabDesign.classList.toggle('active', tab === 'design');
-        }
+        // Click to open file picker
+        dropzone.addEventListener('click', (e) => {
+            e.stopPropagation();
+            fileInput.click();
+        });
 
-        // Update tab content visibility
-        const contentImport = document.getElementById('tabContentImport');
-        const contentDesign = document.getElementById('tabContentDesign');
+        // Handle file selection
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                this.handleFileUpload(file);
+            }
+        });
 
-        if (contentImport && contentDesign) {
-            contentImport.classList.toggle('active', tab === 'import');
-            contentDesign.classList.toggle('active', tab === 'design');
-        }
+        // Drag and drop events
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.add('dragover');
+        });
 
-        console.log(`📑 Switched to ${tab} tab`);
+        dropzone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.remove('dragover');
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.remove('dragover');
+
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                this.handleFileUpload(file);
+            } else {
+                this.showUrlStatus('Please drop an image file', 'error');
+            }
+        });
     },
 
     /**
-     * Import ring from direct image URL
-     * Simple and reliable - user pastes image URL directly
+     * Handle uploaded file - convert to data URL and set as reference
      */
-    async importImageUrl() {
+    async handleFileUpload(file) {
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            this.showUrlStatus('Please select an image file', 'error');
+            return;
+        }
+
+        // Validate file size (max 10MB)
+        const maxSize = 10 * 1024 * 1024;
+        if (file.size > maxSize) {
+            this.showUrlStatus('Image is too large. Please use an image under 10MB.', 'error');
+            return;
+        }
+
+        this.showLoading(true);
+
+        try {
+            // Convert to data URL
+            const dataUrl = await this.fileToDataUrl(file);
+
+            console.log('📷 Reference image uploaded:', file.name);
+
+            // Set as reference image
+            this.setReferenceImage(dataUrl, 'uploaded');
+
+        } catch (error) {
+            console.error('Upload error:', error);
+            this.showUrlStatus('Could not process image. Please try again.', 'error');
+        } finally {
+            this.showLoading(false);
+            // Clear file input for future uploads
+            const fileInput = document.getElementById('ringFileInput');
+            if (fileInput) fileInput.value = '';
+        }
+    },
+
+    /**
+     * Convert file to data URL
+     */
+    fileToDataUrl(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = () => reject(new Error('Failed to read file'));
+            reader.readAsDataURL(file);
+        });
+    },
+
+    // ============================================
+    // REFERENCE IMAGE SECTION
+    // ============================================
+
+    /**
+     * Toggle reference section visibility
+     */
+    toggleReferenceSection() {
+        this.referenceSectionExpanded = !this.referenceSectionExpanded;
+        const section = document.getElementById('referenceSection');
+        const icon = document.getElementById('referenceCollapseIcon');
+
+        if (section) {
+            section.style.display = this.referenceSectionExpanded ? 'block' : 'none';
+        }
+        if (icon) {
+            icon.textContent = this.referenceSectionExpanded ? '−' : '+';
+        }
+    },
+
+    /**
+     * Import reference image from URL
+     */
+    async importReferenceUrl() {
         const urlInput = document.getElementById('ringUrlInput');
         const url = urlInput?.value.trim();
 
@@ -211,13 +312,10 @@ const app = {
             return;
         }
 
-        // Show loading state
         this.showLoading(true);
         this.showUrlStatus('Loading image...', 'loading');
 
         // Test if the image loads
-        // Note: Don't set crossOrigin - it requires CORS headers which many CDNs don't provide
-        // We only need CORS if manipulating pixel data, not for display
         const img = new Image();
 
         try {
@@ -225,138 +323,62 @@ const app = {
                 img.onload = resolve;
                 img.onerror = () => reject(new Error('Image failed to load'));
                 img.src = url;
-
-                // Timeout after 10 seconds
                 setTimeout(() => reject(new Error('Image took too long to load')), 10000);
             });
 
-            console.log('💍 Image loaded:', url);
+            console.log('🔗 Reference image loaded:', url);
 
-            // Store imported ring data
-            this.importedRing = {
-                imageUrl: url,
-                source: new URL(url).hostname
-            };
+            // Set as reference image
+            this.setReferenceImage(url, new URL(url).hostname);
+            this.showUrlStatus('', '');
 
-            // Display the imported ring
-            this.displayImportedRing();
-            this.showUrlStatus('Image imported!', 'success');
-
-            // Clear input
+            // Clear URL input
             urlInput.value = '';
 
         } catch (error) {
             console.error('Image load error:', error);
-            this.showUrlStatus('Could not load this image. The website may be blocking it. Try saving the image first and uploading it.', 'error');
+            this.showUrlStatus('Could not load this image. Try saving it first and uploading.', 'error');
         } finally {
             this.showLoading(false);
         }
     },
 
     /**
-     * Show URL status message
+     * Set reference image and update UI
      */
-    showUrlStatus(message, type) {
-        const urlStatus = document.getElementById('urlStatus');
-        if (urlStatus) {
-            urlStatus.textContent = message;
-            urlStatus.className = `url-status ${type}`;
-        }
+    setReferenceImage(imageUrl, source) {
+        this.referenceImage = { imageUrl, source };
+
+        // Update preview
+        const preview = document.getElementById('referencePreview');
+        const options = document.getElementById('referenceOptions');
+        const refImage = document.getElementById('referenceImage');
+
+        if (refImage) refImage.src = imageUrl;
+        if (preview) preview.style.display = 'flex';
+        if (options) options.style.display = 'none';
+
+        // Also show in main preview panel
+        this.displayPreview(imageUrl, 'Your inspiration');
+
+        console.log('✨ Reference image set');
     },
 
     /**
-     * Display imported ring in the preview area
+     * Clear reference image
      */
-    displayImportedRing() {
-        if (!this.importedRing) return;
+    clearReference() {
+        this.referenceImage = null;
 
-        const preview = document.getElementById('importedRingPreview');
-        const urlImportSection = document.getElementById('urlImportSection');
-        const designConversation = document.getElementById('designConversation');
+        const preview = document.getElementById('referencePreview');
+        const options = document.getElementById('referenceOptions');
+        const refImage = document.getElementById('referenceImage');
 
-        if (!preview) return;
-
-        // Show imported ring preview, hide other sections
-        preview.style.display = 'block';
-        if (urlImportSection) urlImportSection.style.display = 'none';
-        if (designConversation) designConversation.style.display = 'none';
-
-        // Update the imported ring image
-        const importedImage = document.getElementById('importedRingImage');
-        if (importedImage && this.importedRing.imageUrl) {
-            importedImage.src = this.importedRing.imageUrl;
-            importedImage.alt = 'Imported ring from ' + (this.importedRing.source || 'web');
-        }
-
-        // Also show in the live preview panel
-        this.displayPreview(this.importedRing.imageUrl, 'Imported Ring');
-    },
-
-    /**
-     * Select the imported ring as the final choice
-     */
-    selectImportedRing() {
-        if (!this.importedRing) {
-            alert('No ring imported.');
-            return;
-        }
-
-        // Create design object from imported ring
-        this.currentDesign = {
-            type: 'imported',
-            imageUrl: this.importedRing.imageUrl,
-            title: 'Your Chosen Ring',
-            source: this.importedRing.source
-        };
-
-        // Show preview screen
-        this.showPreview();
-    },
-
-    /**
-     * Use imported ring as inspiration for AI design
-     * Switches to the design tab with the image as reference
-     */
-    useAsInspiration() {
-        if (!this.importedRing) return;
-
-        // Switch to design tab
-        this.switchTab('design');
-
-        // Clear import view
-        this.clearImport();
-
-        // Pre-fill with a helpful prompt
-        const textarea = document.getElementById('ringDescription');
-        if (textarea) {
-            textarea.value = 'I love this ring! Create something similar with ';
-            textarea.focus();
-            textarea.setSelectionRange(textarea.value.length, textarea.value.length);
-            document.getElementById('charCount').textContent = textarea.value.length;
-        }
-
-        // Show a hint
-        this.showUrlStatus('Describe what you love about this ring, or what changes you\'d like!', 'success');
-    },
-
-    /**
-     * Clear the imported ring preview
-     */
-    clearImport() {
-        this.importedRing = null;
-
-        const preview = document.getElementById('importedRingPreview');
-        const urlImportSection = document.getElementById('urlImportSection');
-        const designConversation = document.getElementById('designConversation');
-
+        if (refImage) refImage.src = '';
         if (preview) preview.style.display = 'none';
-        if (urlImportSection) urlImportSection.style.display = 'block';
-        if (designConversation) designConversation.style.display = 'block';
+        if (options) options.style.display = 'block';
 
-        // Clear URL status
-        this.showUrlStatus('', '');
-
-        // Reset live preview
+        // Reset main preview
         const previewPlaceholder = document.getElementById('previewPlaceholder');
         const previewImage = document.getElementById('livePreviewImage');
         const previewCaption = document.getElementById('previewCaption');
@@ -370,6 +392,19 @@ const app = {
         }
         if (previewImage) previewImage.style.display = 'none';
         if (previewCaption) previewCaption.style.display = 'none';
+
+        console.log('🗑️ Reference cleared');
+    },
+
+    /**
+     * Show URL status message
+     */
+    showUrlStatus(message, type) {
+        const urlStatus = document.getElementById('urlStatus');
+        if (urlStatus) {
+            urlStatus.textContent = message;
+            urlStatus.className = `url-status ${type}`;
+        }
     },
 
     /**
@@ -657,8 +692,11 @@ const app = {
         this.showLoading(true);
 
         try {
-            // Call fal.ai API
-            const result = await FalAPI.generateRingImage(description);
+            // Get reference image if available
+            const referenceUrl = this.referenceImage?.imageUrl || null;
+
+            // Call fal.ai API with optional reference image
+            const result = await FalAPI.generateRingImage(description, referenceUrl);
 
             if (result.success) {
                 console.log('💎 Ring generated successfully');
@@ -769,12 +807,12 @@ const app = {
      * Switch UI to conversation mode after first generation
      */
     showConversationMode() {
-        // Hide initial prompt
-        document.getElementById('initialPrompt').style.display = 'none';
+        // Hide design flow, show conversation mode
+        const designFlow = document.getElementById('designFlow');
+        const conversationMode = document.getElementById('conversationMode');
 
-        // Show conversation history and refinement input
-        document.getElementById('conversationHistory').style.display = 'flex';
-        document.getElementById('refinementInput').style.display = 'block';
+        if (designFlow) designFlow.style.display = 'none';
+        if (conversationMode) conversationMode.style.display = 'block';
 
         // Update the display
         this.updateConversationDisplay();
@@ -820,14 +858,37 @@ const app = {
         this.conversation.currentImage = null;
         this.conversation.iteration = 0;
         this.currentDesign = null;
+        this.referenceImage = null;
 
-        // Reset UI
-        document.getElementById('initialPrompt').style.display = 'block';
-        document.getElementById('conversationHistory').style.display = 'none';
-        document.getElementById('refinementInput').style.display = 'none';
-        document.getElementById('conversationHistory').innerHTML = '';
-        document.getElementById('ringDescription').value = '';
-        document.getElementById('charCount').textContent = '0';
+        // Reset UI - show design flow, hide conversation mode
+        const designFlow = document.getElementById('designFlow');
+        const conversationMode = document.getElementById('conversationMode');
+        const conversationHistory = document.getElementById('conversationHistory');
+
+        if (designFlow) designFlow.style.display = 'block';
+        if (conversationMode) conversationMode.style.display = 'none';
+        if (conversationHistory) conversationHistory.innerHTML = '';
+
+        // Reset form
+        const textarea = document.getElementById('ringDescription');
+        const charCount = document.getElementById('charCount');
+        if (textarea) textarea.value = '';
+        if (charCount) charCount.textContent = '0';
+
+        // Clear any selected chips
+        document.querySelectorAll('.guide-chip.selected').forEach(chip => {
+            chip.classList.remove('selected');
+        });
+
+        // Clear reference image
+        this.clearReference();
+
+        // Collapse reference section
+        this.referenceSectionExpanded = false;
+        const refSection = document.getElementById('referenceSection');
+        const refIcon = document.getElementById('referenceCollapseIcon');
+        if (refSection) refSection.style.display = 'none';
+        if (refIcon) refIcon.textContent = '+';
     },
 
     /**
@@ -945,6 +1006,223 @@ const app = {
             overlay.classList.remove('hidden');
         } else {
             overlay.classList.add('hidden');
+        }
+    },
+
+    // ============================================
+    // RING COLLECTION MANAGEMENT
+    // ============================================
+
+    collectionExpanded: false,
+
+    /**
+     * Load saved collection from Firebase on init
+     */
+    async loadCollection() {
+        try {
+            const result = await FirebaseClient.getCollection();
+            if (result.success) {
+                this.savedRings = result.data;
+                this.updateCollectionDisplay();
+                console.log(`💎 Loaded ${this.savedRings.length} saved rings`);
+            }
+        } catch (error) {
+            console.warn('Could not load collection:', error);
+        }
+    },
+
+    /**
+     * Toggle collection visibility
+     */
+    toggleCollection() {
+        this.collectionExpanded = !this.collectionExpanded;
+        const gallery = document.getElementById('collectionGallery');
+        const toggleText = document.getElementById('collectionToggleText');
+
+        if (gallery) {
+            gallery.style.display = this.collectionExpanded ? 'block' : 'none';
+        }
+        if (toggleText) {
+            toggleText.textContent = this.collectionExpanded ? 'Hide' : 'Show';
+        }
+    },
+
+    /**
+     * Save current AI-generated design to collection
+     */
+    async saveCurrentToCollection() {
+        if (!this.currentDesign || !this.currentDesign.imageUrl) {
+            alert('No design to save. Generate a ring first!');
+            return;
+        }
+
+        this.showLoading(true);
+
+        try {
+            const ring = {
+                imageUrl: this.currentDesign.imageUrl,
+                prompt: this.currentDesign.description || '',
+                type: 'generated'
+            };
+
+            const result = await FirebaseClient.saveToCollection(ring);
+
+            if (result.success) {
+                // Refresh collection
+                await this.loadCollection();
+
+                // Show success feedback
+                this.showSaveSuccess('Ring saved to collection!');
+
+                // Expand collection to show the new ring
+                if (!this.collectionExpanded) {
+                    this.toggleCollection();
+                }
+            } else {
+                throw new Error(result.error);
+            }
+        } catch (error) {
+            console.error('Save to collection failed:', error);
+            alert('Could not save ring. Please try again.');
+        } finally {
+            this.showLoading(false);
+        }
+    },
+
+    /**
+     * Show brief success message
+     */
+    showSaveSuccess(message) {
+        const toast = document.createElement('div');
+        toast.className = 'save-toast';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.classList.add('show');
+        }, 10);
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }, 2000);
+    },
+
+    /**
+     * Update the collection display
+     */
+    updateCollectionDisplay() {
+        const grid = document.getElementById('collectionGrid');
+        const empty = document.getElementById('collectionEmpty');
+        const count = document.getElementById('collectionCount');
+
+        if (count) {
+            count.textContent = `(${this.savedRings.length})`;
+        }
+
+        if (!grid) return;
+
+        if (this.savedRings.length === 0) {
+            grid.style.display = 'none';
+            if (empty) empty.style.display = 'flex';
+            return;
+        }
+
+        grid.style.display = 'grid';
+        if (empty) empty.style.display = 'none';
+
+        // Render collection cards
+        grid.innerHTML = this.savedRings.map(ring => `
+            <div class="collection-card ${ring.isTheOne ? 'is-the-one' : ''}" data-ring-id="${ring.id}">
+                <div class="collection-card-image">
+                    <img src="${ring.imageUrl}" alt="Saved ring" loading="lazy">
+                    ${ring.isTheOne ? '<div class="the-one-badge">💕 The One</div>' : ''}
+                </div>
+                <div class="collection-card-info">
+                    <span class="ring-type ${ring.type}">${ring.type === 'imported' ? '🔗 Imported' : '✨ Generated'}</span>
+                    <span class="ring-date">${this.formatDate(ring.createdAt)}</span>
+                </div>
+                <div class="collection-card-actions">
+                    ${!ring.isTheOne ? `
+                        <button class="btn-the-one" onclick="app.markAsTheOne('${ring.id}')" title="Mark as The One">
+                            💕 This Is The One!
+                        </button>
+                    ` : `
+                        <button class="btn-the-one selected" disabled>
+                            💕 The One
+                        </button>
+                    `}
+                    <button class="btn-remove" onclick="app.removeFromCollection('${ring.id}')" title="Remove from collection">
+                        🗑️
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    },
+
+    /**
+     * Format date for display
+     */
+    formatDate(dateString) {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit'
+        });
+    },
+
+    /**
+     * Mark a ring as "The One"
+     */
+    async markAsTheOne(ringId) {
+        this.showLoading(true);
+
+        try {
+            const result = await FirebaseClient.markAsTheOne(ringId);
+
+            if (result.success) {
+                // Refresh collection to show updated state
+                await this.loadCollection();
+                this.showSaveSuccess('💕 Marked as The One!');
+            } else {
+                throw new Error(result.error);
+            }
+        } catch (error) {
+            console.error('Mark as The One failed:', error);
+            alert('Could not mark ring. Please try again.');
+        } finally {
+            this.showLoading(false);
+        }
+    },
+
+    /**
+     * Remove ring from collection
+     */
+    async removeFromCollection(ringId) {
+        if (!confirm('Remove this ring from your collection?')) {
+            return;
+        }
+
+        this.showLoading(true);
+
+        try {
+            const result = await FirebaseClient.removeFromCollection(ringId);
+
+            if (result.success) {
+                // Refresh collection
+                await this.loadCollection();
+                this.showSaveSuccess('Ring removed');
+            } else {
+                throw new Error(result.error);
+            }
+        } catch (error) {
+            console.error('Remove from collection failed:', error);
+            alert('Could not remove ring. Please try again.');
+        } finally {
+            this.showLoading(false);
         }
     }
 };

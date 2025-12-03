@@ -2592,3 +2592,687 @@ img {
         transform: scale(0.98) !important;
     }
 }
+
+/* ========================================
+   Ring Collection Gallery
+   ======================================== */
+
+.my-collection-section {
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-lg);
+    border-top: 2px dashed var(--flamingo);
+}
+
+.collection-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.collection-title {
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    color: var(--hot-pink);
+    margin: 0;
+}
+
+.btn-toggle-collection {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, var(--turquoise), var(--ocean-blue));
+    color: white;
+    border: none;
+    border-radius: var(--radius-lg);
+    font-family: var(--font-body);
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-toggle-collection:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-turquoise);
+}
+
+.collection-count {
+    font-weight: 600;
+}
+
+.collection-gallery {
+    animation: fadeInUp 0.3s ease;
+}
+
+.collection-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-md);
+}
+
+.collection-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl);
+    text-align: center;
+    color: var(--charcoal);
+    opacity: 0.6;
+}
+
+.collection-empty .empty-icon {
+    font-size: 3rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+/* Collection Card */
+.collection-card {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    position: relative;
+}
+
+.collection-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+}
+
+.collection-card-image {
+    position: relative;
+    aspect-ratio: 1;
+    overflow: hidden;
+}
+
+.collection-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition);
+}
+
+.collection-card:hover .collection-card-image img {
+    transform: scale(1.05);
+}
+
+/* The One Badge */
+.the-one-badge {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: linear-gradient(135deg, var(--hot-pink), var(--coral));
+    color: white;
+    padding: 0.3rem 0.6rem;
+    border-radius: var(--radius-lg);
+    font-size: 0.75rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(233, 30, 140, 0.4);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* The One Card - Special Treatment */
+.collection-card.is-the-one {
+    border: 3px solid var(--hot-pink);
+    box-shadow: 0 0 20px rgba(233, 30, 140, 0.3);
+}
+
+.collection-card.is-the-one::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--hot-pink), var(--coral), var(--sunny-gold), var(--turquoise));
+    z-index: 1;
+}
+
+.collection-card-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+    background: var(--soft-pink);
+}
+
+.ring-type {
+    font-weight: 500;
+}
+
+.ring-type.imported {
+    color: var(--turquoise);
+}
+
+.ring-type.generated {
+    color: var(--palm-green);
+}
+
+.ring-date {
+    color: var(--charcoal);
+    opacity: 0.6;
+}
+
+.collection-card-actions {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: white;
+}
+
+.btn-the-one {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    background: linear-gradient(135deg, var(--flamingo), var(--hot-pink));
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-the-one:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(233, 30, 140, 0.3);
+}
+
+.btn-the-one.selected {
+    background: linear-gradient(135deg, var(--palm-green), var(--turquoise));
+    cursor: default;
+}
+
+.btn-remove {
+    padding: 0.5rem 0.75rem;
+    background: transparent;
+    border: 1px solid var(--error);
+    color: var(--error);
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-remove:hover {
+    background: var(--error);
+    color: white;
+}
+
+/* Save to Collection Button */
+.btn-save-collection {
+    padding: 0.75rem 1.25rem;
+    background: linear-gradient(135deg, var(--turquoise), var(--ocean-blue));
+    color: white;
+    border: none;
+    border-radius: var(--radius-lg);
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-save-collection:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-turquoise);
+}
+
+/* Save Toast Notification */
+.save-toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: linear-gradient(135deg, var(--palm-green), var(--turquoise));
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: var(--radius-lg);
+    font-weight: 500;
+    box-shadow: var(--shadow-lg);
+    z-index: 1000;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.save-toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+/* Pulse animation for The One badge */
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* Collection responsive styles */
+@media (max-width: 600px) {
+    .collection-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-sm);
+    }
+
+    .collection-header {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        align-items: flex-start;
+    }
+
+    .btn-the-one {
+        font-size: 0.7rem;
+        padding: 0.4rem 0.5rem;
+    }
+
+    .collection-card-actions {
+        padding: 0.5rem;
+    }
+}
+
+/* ========================================
+   File Upload Dropzone
+   ======================================== */
+
+.upload-divider {
+    display: flex;
+    align-items: center;
+    margin: var(--spacing-md) 0;
+    color: var(--charcoal);
+    opacity: 0.5;
+    font-size: 0.85rem;
+}
+
+.upload-divider::before,
+.upload-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--flamingo), transparent);
+}
+
+.upload-divider span {
+    padding: 0 var(--spacing-sm);
+    white-space: nowrap;
+}
+
+.file-upload-section {
+    margin-bottom: var(--spacing-md);
+}
+
+.upload-dropzone {
+    position: relative;
+    border: 2px dashed var(--flamingo);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+    background: linear-gradient(135deg, rgba(255, 107, 157, 0.05), rgba(0, 206, 209, 0.05));
+}
+
+.upload-dropzone:hover {
+    border-color: var(--hot-pink);
+    background: linear-gradient(135deg, rgba(255, 107, 157, 0.1), rgba(0, 206, 209, 0.1));
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.upload-dropzone.dragover {
+    border-color: var(--turquoise);
+    background: linear-gradient(135deg, rgba(0, 206, 209, 0.15), rgba(78, 205, 196, 0.15));
+    transform: scale(1.02);
+    box-shadow: var(--shadow-turquoise);
+}
+
+.file-input-hidden {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    /* Hide but keep accessible */
+    pointer-events: none;
+}
+
+.dropzone-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.upload-icon {
+    font-size: 2.5rem;
+    animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+.upload-text {
+    font-weight: 600;
+    color: var(--hot-pink);
+    font-size: 1rem;
+    margin: 0;
+}
+
+.upload-hint {
+    font-size: 0.8rem;
+    color: var(--charcoal);
+    opacity: 0.6;
+    margin: 0;
+}
+
+/* Mobile adjustments for upload */
+@media (max-width: 600px) {
+    .upload-dropzone {
+        padding: var(--spacing-md);
+    }
+
+    .upload-icon {
+        font-size: 2rem;
+    }
+
+    .upload-text {
+        font-size: 0.9rem;
+    }
+
+    .upload-hint {
+        display: none; /* Hide drag hint on mobile */
+    }
+}
+
+/* ========================================
+   Unified Design Flow
+   ======================================== */
+
+.design-flow {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.flow-section {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.flow-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.flow-header.collapsible {
+    cursor: pointer;
+    margin-bottom: 0;
+    padding: var(--spacing-xs) 0;
+    transition: var(--transition);
+}
+
+.flow-header.collapsible:hover {
+    opacity: 0.8;
+}
+
+.flow-step {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, var(--hot-pink), var(--coral));
+    color: white;
+    border-radius: 50%;
+    font-size: 0.85rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.flow-step.optional {
+    background: linear-gradient(135deg, var(--turquoise), var(--ocean-blue));
+}
+
+.flow-title {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    color: var(--charcoal);
+    margin: 0;
+    flex: 1;
+}
+
+.optional-tag {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: var(--charcoal);
+    opacity: 0.5;
+}
+
+.collapse-icon {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--turquoise);
+    width: 24px;
+    text-align: center;
+}
+
+/* Reference Section */
+.reference-section {
+    padding-top: var(--spacing-md);
+    animation: fadeInUp 0.3s ease;
+}
+
+.reference-hint {
+    font-size: 0.9rem;
+    color: var(--charcoal);
+    opacity: 0.7;
+    margin-bottom: var(--spacing-md);
+    text-align: center;
+}
+
+.reference-preview {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm);
+    background: linear-gradient(135deg, rgba(0, 206, 209, 0.1), rgba(78, 205, 196, 0.1));
+    border-radius: var(--radius-md);
+    border: 2px solid var(--turquoise);
+}
+
+.reference-image-container {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.reference-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.btn-remove-reference {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 22px;
+    height: 22px;
+    background: var(--error);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 14px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.reference-label {
+    font-weight: 500;
+    color: var(--palm-green);
+}
+
+/* Reference Options */
+.reference-options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+/* Compact Upload Dropzone */
+.upload-dropzone.compact {
+    padding: var(--spacing-md);
+}
+
+.upload-dropzone.compact .upload-icon {
+    font-size: 1.8rem;
+}
+
+.upload-dropzone.compact .upload-text {
+    font-size: 0.9rem;
+}
+
+.upload-dropzone.compact .upload-hint {
+    display: none;
+}
+
+/* Compact URL Input */
+.url-input-compact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.url-input-compact .url-input-wrapper {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.url-input-compact input {
+    flex: 1;
+    padding: 0.6rem 0.8rem;
+    border: 2px solid var(--flamingo);
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    transition: var(--transition);
+}
+
+.url-input-compact input:focus {
+    outline: none;
+    border-color: var(--hot-pink);
+}
+
+.btn-import-small {
+    padding: 0.6rem 1rem;
+    background: linear-gradient(135deg, var(--turquoise), var(--ocean-blue));
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-import-small:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-turquoise);
+}
+
+/* Compact Vendor Links */
+.vendor-quick-links.compact {
+    margin-top: var(--spacing-sm);
+}
+
+.vendor-quick-links.compact .vendor-links-label {
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.vendor-quick-links.compact .vendor-link {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+}
+
+/* Generate Section */
+.generate-section {
+    text-align: center;
+    padding: var(--spacing-md) 0;
+}
+
+.btn-generate {
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+}
+
+.generate-hint {
+    font-size: 0.85rem;
+    color: var(--charcoal);
+    opacity: 0.6;
+    margin-top: var(--spacing-sm);
+}
+
+/* Conversation Mode */
+.conversation-mode {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.conversation-mode .conversation-history {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    max-height: 400px;
+    overflow-y: auto;
+    padding: var(--spacing-sm);
+    background: var(--soft-pink);
+    border-radius: var(--radius-md);
+}
+
+.conversation-mode .refinement-input {
+    display: block;
+}
+
+/* Mobile adjustments for flow */
+@media (max-width: 600px) {
+    .flow-section {
+        padding: var(--spacing-sm);
+    }
+
+    .flow-title {
+        font-size: 1rem;
+    }
+
+    .reference-preview {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .btn-generate {
+        width: 100%;
+        padding: 0.9rem 1.5rem;
+    }
+}
