@@ -3073,147 +3073,178 @@ img {
     text-align: center;
 }
 
-/* Reference Section */
-.reference-section {
-    padding-top: var(--spacing-md);
-    animation: fadeInUp 0.3s ease;
+/* ========================================
+   Inline Reference Image - Compact Design
+   ======================================== */
+.inline-reference {
+    margin-top: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: rgba(0, 206, 209, 0.08);
+    border: 2px dashed var(--turquoise);
+    border-radius: var(--radius-md);
+    transition: var(--transition);
 }
 
-.reference-hint {
-    font-size: 0.9rem;
-    color: var(--charcoal);
-    opacity: 0.7;
-    margin-bottom: var(--spacing-md);
-    text-align: center;
+.inline-reference:hover {
+    border-color: var(--hot-pink);
+    background: rgba(252, 142, 172, 0.08);
 }
 
-.reference-preview {
+/* Reference Preview (when image added) */
+.inline-reference-preview {
     display: flex;
     align-items: center;
-    gap: var(--spacing-md);
-    padding: var(--spacing-sm);
-    background: linear-gradient(135deg, rgba(0, 206, 209, 0.1), rgba(78, 205, 196, 0.1));
-    border-radius: var(--radius-md);
+    gap: var(--spacing-sm);
+}
+
+.inline-reference-preview img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
     border: 2px solid var(--turquoise);
 }
 
-.reference-image-container {
-    position: relative;
-    width: 80px;
-    height: 80px;
-    border-radius: var(--radius-sm);
-    overflow: hidden;
-    flex-shrink: 0;
+.inline-reference-preview .reference-label {
+    flex: 1;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--palm-green);
 }
 
-.reference-image-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.btn-remove-reference {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    width: 22px;
-    height: 22px;
+.btn-remove-inline {
+    width: 24px;
+    height: 24px;
     background: var(--error);
     color: white;
     border: none;
     border-radius: 50%;
     font-size: 14px;
-    line-height: 1;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.reference-label {
-    font-weight: 500;
-    color: var(--palm-green);
-}
-
-/* Reference Options */
-.reference-options {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-md);
-}
-
-/* Compact Upload Dropzone */
-.upload-dropzone.compact {
-    padding: var(--spacing-md);
-}
-
-.upload-dropzone.compact .upload-icon {
-    font-size: 1.8rem;
-}
-
-.upload-dropzone.compact .upload-text {
-    font-size: 0.9rem;
-}
-
-.upload-dropzone.compact .upload-hint {
-    display: none;
-}
-
-/* Compact URL Input */
-.url-input-compact {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.url-input-compact .url-input-wrapper {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.url-input-compact input {
-    flex: 1;
-    padding: 0.6rem 0.8rem;
-    border: 2px solid var(--flamingo);
-    border-radius: var(--radius-sm);
-    font-size: 0.85rem;
     transition: var(--transition);
 }
 
-.url-input-compact input:focus {
-    outline: none;
-    border-color: var(--hot-pink);
+.btn-remove-inline:hover {
+    transform: scale(1.1);
 }
 
-.btn-import-small {
-    padding: 0.6rem 1rem;
+/* Reference Options (when no image) */
+.inline-reference-options {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.inline-reference-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--charcoal);
+    opacity: 0.7;
+}
+
+.inline-reference-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.btn-inline-action {
+    padding: 0.4rem 0.8rem;
     background: linear-gradient(135deg, var(--turquoise), var(--ocean-blue));
     color: white;
     border: none;
     border-radius: var(--radius-sm);
+    font-size: 0.8rem;
     font-weight: 500;
     cursor: pointer;
     transition: var(--transition);
 }
 
-.btn-import-small:hover {
-    transform: translateY(-2px);
+.btn-inline-action:hover {
+    transform: translateY(-1px);
     box-shadow: var(--shadow-turquoise);
 }
 
-/* Compact Vendor Links */
-.vendor-quick-links.compact {
-    margin-top: var(--spacing-sm);
-}
-
-.vendor-quick-links.compact .vendor-links-label {
-    font-size: 0.8rem;
-    margin-bottom: 0.5rem;
-}
-
-.vendor-quick-links.compact .vendor-link {
+.inline-divider {
     font-size: 0.75rem;
-    padding: 0.3rem 0.6rem;
+    color: var(--charcoal);
+    opacity: 0.5;
+}
+
+.inline-url-input {
+    display: flex;
+    gap: 0.3rem;
+}
+
+.inline-url-input input {
+    width: 120px;
+    padding: 0.4rem 0.6rem;
+    border: 2px solid var(--flamingo);
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    transition: var(--transition);
+}
+
+.inline-url-input input:focus {
+    outline: none;
+    border-color: var(--hot-pink);
+    width: 180px;
+}
+
+.btn-inline-add {
+    padding: 0.4rem 0.6rem;
+    background: var(--flamingo);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-inline-add:hover {
+    background: var(--hot-pink);
+}
+
+.inline-browse-links {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.inline-browse-links a {
+    font-size: 0.75rem;
+    color: var(--turquoise);
+    text-decoration: none;
+    padding: 0.3rem 0.5rem;
+    background: rgba(0, 206, 209, 0.1);
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+}
+
+.inline-browse-links a:hover {
+    background: var(--turquoise);
+    color: white;
+}
+
+.url-status {
+    width: 100%;
+    margin-top: 0.3rem;
+    font-size: 0.75rem;
+}
+
+.url-status.error {
+    color: var(--error);
+}
+
+.url-status.success {
+    color: var(--palm-green);
 }
 
 /* Generate Section */
@@ -3266,13 +3297,33 @@ img {
         font-size: 1rem;
     }
 
-    .reference-preview {
-        flex-direction: column;
-        text-align: center;
-    }
-
     .btn-generate {
         width: 100%;
         padding: 0.9rem 1.5rem;
+    }
+
+    /* Inline reference mobile */
+    .inline-reference-options {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .inline-reference-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .inline-url-input input {
+        width: 100px;
+    }
+
+    .inline-url-input input:focus {
+        width: 140px;
+    }
+
+    .inline-browse-links {
+        width: 100%;
+        justify-content: flex-start;
+        margin-top: 0.3rem;
     }
 }

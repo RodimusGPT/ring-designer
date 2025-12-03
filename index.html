@@ -64,10 +64,9 @@
                     <!-- Initial Design Flow (shown before first generation) -->
                     <div class="design-flow" id="designFlow">
 
-                        <!-- Step 1: Describe Your Vision -->
+                        <!-- Unified Design Section -->
                         <div class="flow-section">
                             <div class="flow-header">
-                                <span class="flow-step">1</span>
                                 <h3 class="flow-title">Describe Your Vision</h3>
                             </div>
 
@@ -106,69 +105,47 @@
                                         <div class="guide-chips" id="guideAccents"></div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
 
-                        <!-- Step 2: Add Reference Image (Optional, Collapsible) -->
-                        <div class="flow-section optional-section">
-                            <div class="flow-header collapsible" onclick="app.toggleReferenceSection()">
-                                <span class="flow-step optional">2</span>
-                                <h3 class="flow-title">Add Reference Image <span class="optional-tag">(optional)</span></h3>
-                                <span class="collapse-icon" id="referenceCollapseIcon">+</span>
-                            </div>
-
-                            <div class="reference-section" id="referenceSection" style="display: none;">
-                                <p class="reference-hint">Have a ring you love? Add it as inspiration!</p>
-
-                                <!-- Reference Image Preview (when added) -->
-                                <div class="reference-preview" id="referencePreview" style="display: none;">
-                                    <div class="reference-image-container">
+                                <!-- Inline Reference Image (Optional) -->
+                                <div class="inline-reference" id="inlineReference">
+                                    <!-- Reference Preview (shown when image added) -->
+                                    <div class="inline-reference-preview" id="referencePreview" style="display: none;">
                                         <img id="referenceImage" src="" alt="Reference ring">
-                                        <button class="btn-remove-reference" onclick="app.clearReference()">×</button>
-                                    </div>
-                                    <span class="reference-label">Reference added ✓</span>
-                                </div>
-
-                                <!-- Add Reference Options (when no reference) -->
-                                <div class="reference-options" id="referenceOptions">
-                                    <!-- Upload Option -->
-                                    <div class="upload-dropzone compact" id="uploadDropzone">
-                                        <input
-                                            type="file"
-                                            id="ringFileInput"
-                                            accept="image/*"
-                                            class="file-input-hidden"
-                                        >
-                                        <div class="dropzone-content">
-                                            <span class="upload-icon">📷</span>
-                                            <p class="upload-text">Upload a photo</p>
-                                        </div>
+                                        <span class="reference-label">Inspiration added</span>
+                                        <button class="btn-remove-inline" onclick="app.clearReference()">×</button>
                                     </div>
 
-                                    <!-- URL Input -->
-                                    <div class="url-input-compact">
-                                        <div class="url-input-wrapper">
-                                            <input
-                                                type="url"
-                                                id="ringUrlInput"
-                                                placeholder="Or paste image URL..."
-                                                autocomplete="off"
-                                            >
-                                            <button class="btn-import-small" onclick="app.importReferenceUrl()">Add</button>
+                                    <!-- Reference Options (shown when no image) -->
+                                    <div class="inline-reference-options" id="referenceOptions">
+                                        <span class="inline-reference-label">📷 Add inspiration</span>
+                                        <div class="inline-reference-actions">
+                                            <label class="btn-inline-action" for="ringFileInput">
+                                                Upload
+                                                <input
+                                                    type="file"
+                                                    id="ringFileInput"
+                                                    accept="image/*"
+                                                    class="file-input-hidden"
+                                                >
+                                            </label>
+                                            <span class="inline-divider">or</span>
+                                            <div class="inline-url-input">
+                                                <input
+                                                    type="url"
+                                                    id="ringUrlInput"
+                                                    placeholder="Paste URL"
+                                                    autocomplete="off"
+                                                >
+                                                <button class="btn-inline-add" onclick="app.importReferenceUrl()">Add</button>
+                                            </div>
+                                            <span class="inline-divider">or</span>
+                                            <div class="inline-browse-links">
+                                                <a href="https://www.tiffany.com/engagement/engagement-rings/" target="_blank" rel="noopener" title="Tiffany">Tiffany</a>
+                                                <a href="https://www.cartier.com/en-us/jewelry/engagement-rings/" target="_blank" rel="noopener" title="Cartier">Cartier</a>
+                                                <a href="https://www.harrywinston.com/en/fine-jewelry/engagement-rings" target="_blank" rel="noopener" title="Harry Winston">HW</a>
+                                            </div>
                                         </div>
                                         <div class="url-status" id="urlStatus"></div>
-                                    </div>
-
-                                    <!-- Quick Links -->
-                                    <div class="vendor-quick-links compact">
-                                        <p class="vendor-links-label">Browse for inspiration:</p>
-                                        <div class="vendor-links-row">
-                                            <a href="https://www.tiffany.com/engagement/engagement-rings/" target="_blank" rel="noopener" class="vendor-link">💎 Tiffany</a>
-                                            <a href="https://www.cartier.com/en-us/jewelry/engagement-rings/" target="_blank" rel="noopener" class="vendor-link">👑 Cartier</a>
-                                            <a href="https://www.harrywinston.com/en/fine-jewelry/engagement-rings" target="_blank" rel="noopener" class="vendor-link">✨ Harry Winston</a>
-                                            <a href="https://www.vancleefarpels.com/us/en/collections/engagement/diamond-sets.html?category=ring" target="_blank" rel="noopener" class="vendor-link">🌸 Van Cleef</a>
-                                            <a href="https://www.graff.com/us-en/engagement-bridal/engagement/engagement-rings/?cgid=bridal_engagement_engagementrings" target="_blank" rel="noopener" class="vendor-link">💫 Graff</a>
-                                        </div>
                                     </div>
                                 </div>
                             </div>

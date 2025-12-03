@@ -17,7 +17,6 @@ const app = {
 
     // Reference image for AI generation
     referenceImage: null,  // {imageUrl, source}
-    referenceSectionExpanded: false,
 
     // Saved ring collection
     savedRings: [],  // Array of {id, imageUrl, prompt, type, timestamp, isTheOne}
@@ -161,51 +160,17 @@ const app = {
     },
 
     /**
-     * Setup file upload with drag and drop support
+     * Setup file upload handler
      */
     setupFileUpload() {
-        const dropzone = document.getElementById('uploadDropzone');
         const fileInput = document.getElementById('ringFileInput');
-
-        if (!dropzone || !fileInput) return;
-
-        // Click to open file picker
-        dropzone.addEventListener('click', (e) => {
-            e.stopPropagation();
-            fileInput.click();
-        });
+        if (!fileInput) return;
 
         // Handle file selection
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
                 this.handleFileUpload(file);
-            }
-        });
-
-        // Drag and drop events
-        dropzone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            dropzone.classList.add('dragover');
-        });
-
-        dropzone.addEventListener('dragleave', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            dropzone.classList.remove('dragover');
-        });
-
-        dropzone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            dropzone.classList.remove('dragover');
-
-            const file = e.dataTransfer.files[0];
-            if (file && file.type.startsWith('image/')) {
-                this.handleFileUpload(file);
-            } else {
-                this.showUrlStatus('Please drop an image file', 'error');
             }
         });
     },
@@ -264,22 +229,6 @@ const app = {
     // ============================================
     // REFERENCE IMAGE SECTION
     // ============================================
-
-    /**
-     * Toggle reference section visibility
-     */
-    toggleReferenceSection() {
-        this.referenceSectionExpanded = !this.referenceSectionExpanded;
-        const section = document.getElementById('referenceSection');
-        const icon = document.getElementById('referenceCollapseIcon');
-
-        if (section) {
-            section.style.display = this.referenceSectionExpanded ? 'block' : 'none';
-        }
-        if (icon) {
-            icon.textContent = this.referenceSectionExpanded ? '−' : '+';
-        }
-    },
 
     /**
      * Import reference image from URL
@@ -882,13 +831,6 @@ const app = {
 
         // Clear reference image
         this.clearReference();
-
-        // Collapse reference section
-        this.referenceSectionExpanded = false;
-        const refSection = document.getElementById('referenceSection');
-        const refIcon = document.getElementById('referenceCollapseIcon');
-        if (refSection) refSection.style.display = 'none';
-        if (refIcon) refIcon.textContent = '+';
     },
 
     /**
