@@ -202,8 +202,9 @@ const app = {
 
         // Check if it looks like an image URL
         const imageExtensions = /\.(jpg|jpeg|png|gif|webp|avif|bmp|svg)(\?.*)?$/i;
-        const imagePatterns = /\/(images|photos|products|media|cdn|static)\//i;
-        const isLikelyImage = imageExtensions.test(url) || imagePatterns.test(url) || url.includes('cloudinary') || url.includes('imgix');
+        const imagePatterns = /\/(images|photos|products|media|cdn|static|dw|assets)\//i;
+        const isLikelyImage = imageExtensions.test(url) || imagePatterns.test(url) ||
+            url.includes('cloudinary') || url.includes('imgix') || url.includes('scene7');
 
         if (!isLikelyImage) {
             this.showUrlStatus('This doesn\'t look like an image URL. Try right-clicking an image and selecting "Copy image address"', 'error');
@@ -215,8 +216,9 @@ const app = {
         this.showUrlStatus('Loading image...', 'loading');
 
         // Test if the image loads
+        // Note: Don't set crossOrigin - it requires CORS headers which many CDNs don't provide
+        // We only need CORS if manipulating pixel data, not for display
         const img = new Image();
-        img.crossOrigin = 'anonymous';
 
         try {
             await new Promise((resolve, reject) => {
