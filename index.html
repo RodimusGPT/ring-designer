@@ -81,9 +81,15 @@
                                     <span id="charCount">0</span> / 500 characters
                                 </div>
 
-                                <!-- Interactive Ring Terminology Guide -->
-                                <div class="inline-ring-guide" id="ringGuide">
-                                    <p class="guide-intro">💎 Tap to explore & add to your description:</p>
+                                <!-- Layout Toggle -->
+                                <div class="guide-layout-toggle" id="guideLayoutToggle">
+                                    <button class="layout-btn active" data-layout="classic">Classic</button>
+                                    <button class="layout-btn" data-layout="tabbed">Tabbed</button>
+                                </div>
+
+                                <!-- CLASSIC Layout (existing stacked rows) -->
+                                <div class="inline-ring-guide" id="ringGuideClassic">
+                                    <p class="guide-intro">Tap to explore & add to your description:</p>
 
                                     <div class="guide-row">
                                         <span class="guide-label">Diamond:</span>
@@ -103,6 +109,51 @@
                                     <div class="guide-row">
                                         <span class="guide-label">Accents:</span>
                                         <div class="guide-chips" id="guideAccents"></div>
+                                    </div>
+                                </div>
+
+                                <!-- TABBED Layout (new compact tabs) -->
+                                <div class="ring-guide-tabs" id="ringGuideTabs" style="display: none;">
+                                    <p class="guide-intro">Tap to explore & add:</p>
+
+                                    <!-- Tab Bar -->
+                                    <div class="guide-tab-bar" role="tablist">
+                                        <button class="guide-tab active" id="tab-diamond" role="tab" aria-selected="true" aria-controls="panel-diamond" data-category="diamond">
+                                            <span class="tab-icon">💎</span>
+                                            <span class="tab-label">Diamond</span>
+                                            <span class="tab-badge" id="badge-diamond"></span>
+                                        </button>
+                                        <button class="guide-tab" id="tab-setting" role="tab" aria-selected="false" aria-controls="panel-setting" data-category="setting">
+                                            <span class="tab-icon">💍</span>
+                                            <span class="tab-label">Setting</span>
+                                            <span class="tab-badge" id="badge-setting"></span>
+                                        </button>
+                                        <button class="guide-tab" id="tab-metal" role="tab" aria-selected="false" aria-controls="panel-metal" data-category="metal">
+                                            <span class="tab-icon">✨</span>
+                                            <span class="tab-label">Metal</span>
+                                            <span class="tab-badge" id="badge-metal"></span>
+                                        </button>
+                                        <button class="guide-tab" id="tab-accents" role="tab" aria-selected="false" aria-controls="panel-accents" data-category="accents">
+                                            <span class="tab-icon">🌟</span>
+                                            <span class="tab-label">Accents</span>
+                                            <span class="tab-badge" id="badge-accents"></span>
+                                        </button>
+                                    </div>
+
+                                    <!-- Tab Panels -->
+                                    <div class="guide-panels">
+                                        <div class="guide-panel active" id="panel-diamond" role="tabpanel" aria-labelledby="tab-diamond">
+                                            <div class="guide-chips" id="guideShapesTabs"></div>
+                                        </div>
+                                        <div class="guide-panel" id="panel-setting" role="tabpanel" aria-labelledby="tab-setting" hidden>
+                                            <div class="guide-chips" id="guideSettingsTabs"></div>
+                                        </div>
+                                        <div class="guide-panel" id="panel-metal" role="tabpanel" aria-labelledby="tab-metal" hidden>
+                                            <div class="guide-chips" id="guideMetalsTabs"></div>
+                                        </div>
+                                        <div class="guide-panel" id="panel-accents" role="tabpanel" aria-labelledby="tab-accents" hidden>
+                                            <div class="guide-chips" id="guideAccentsTabs"></div>
+                                        </div>
                                     </div>
                                 </div>
 

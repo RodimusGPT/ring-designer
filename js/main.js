@@ -33,6 +33,10 @@ const app = {
         // Setup ring terminology guide with live preview
         this.setupRingGuide();
 
+        // Setup layout toggle and tabbed navigation
+        this.setupLayoutToggle();
+        this.setupRingGuideTabs();
+
         // Setup file upload handler
         this.setupFileUpload();
 
@@ -82,44 +86,213 @@ const app = {
     },
 
     /**
-     * Setup ring terminology guide with clickable chips
+     * Setup ring terminology guide with clickable chips (both layouts)
      */
     setupRingGuide() {
         if (!CONFIG.RING_GUIDE) return;
 
         const guide = CONFIG.RING_GUIDE;
 
-        // Populate diamond shapes
+        // Helper to generate chip HTML
+        const createChips = (items) => items.map(item =>
+            `<button class="guide-chip" onclick="app.insertTerm('${item.name}')" title="${item.desc}">${item.name}</button>`
+        ).join('');
+
+        // Populate CLASSIC layout
         const shapesContainer = document.getElementById('guideShapes');
         if (shapesContainer && guide.diamondShapes) {
-            shapesContainer.innerHTML = guide.diamondShapes.map(item =>
-                `<button class="guide-chip" onclick="app.insertTerm('${item.name}')" title="${item.desc}">${item.name}</button>`
-            ).join('');
+            shapesContainer.innerHTML = createChips(guide.diamondShapes);
         }
 
-        // Populate settings
         const settingsContainer = document.getElementById('guideSettings');
         if (settingsContainer && guide.settings) {
-            settingsContainer.innerHTML = guide.settings.map(item =>
-                `<button class="guide-chip" onclick="app.insertTerm('${item.name}')" title="${item.desc}">${item.name}</button>`
-            ).join('');
+            settingsContainer.innerHTML = createChips(guide.settings);
         }
 
-        // Populate metals
         const metalsContainer = document.getElementById('guideMetals');
         if (metalsContainer && guide.metals) {
-            metalsContainer.innerHTML = guide.metals.map(item =>
-                `<button class="guide-chip" onclick="app.insertTerm('${item.name}')" title="${item.desc}">${item.name}</button>`
-            ).join('');
+            metalsContainer.innerHTML = createChips(guide.metals);
         }
 
-        // Populate accents
         const accentsContainer = document.getElementById('guideAccents');
         if (accentsContainer && guide.accents) {
-            accentsContainer.innerHTML = guide.accents.map(item =>
-                `<button class="guide-chip" onclick="app.insertTerm('${item.name}')" title="${item.desc}">${item.name}</button>`
-            ).join('');
+            accentsContainer.innerHTML = createChips(guide.accents);
         }
+
+        // Populate TABBED layout
+        const shapesTabsContainer = document.getElementById('guideShapesTabs');
+        if (shapesTabsContainer && guide.diamondShapes) {
+            shapesTabsContainer.innerHTML = createChips(guide.diamondShapes);
+        }
+
+        const settingsTabsContainer = document.getElementById('guideSettingsTabs');
+        if (settingsTabsContainer && guide.settings) {
+            settingsTabsContainer.innerHTML = createChips(guide.settings);
+        }
+
+        const metalsTabsContainer = document.getElementById('guideMetalsTabs');
+        if (metalsTabsContainer && guide.metals) {
+            metalsTabsContainer.innerHTML = createChips(guide.metals);
+        }
+
+        const accentsTabsContainer = document.getElementById('guideAccentsTabs');
+        if (accentsTabsContainer && guide.accents) {
+            accentsTabsContainer.innerHTML = createChips(guide.accents);
+        }
+    },
+
+    /**
+     * Setup layout toggle between Classic and Tabbed views
+     */
+    setupLayoutToggle() {
+        const toggleContainer = document.getElementById('guideLayoutToggle');
+        if (!toggleContainer) return;
+
+        const buttons = toggleContainer.querySelectorAll('.layout-btn');
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const layout = btn.dataset.layout;
+                this.setGuideLayout(layout);
+
+                // Update active button
+                buttons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        // Restore saved layout preference
+        const savedLayout = localStorage.getItem('ringGuideLayout') || 'classic';
+        this.setGuideLayout(savedLayout);
+
+        // Update button state
+        buttons.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.layout === savedLayout);
+        });
+    },
+
+    /**
+     * Switch between Classic and Tabbed layouts
+     */
+    setGuideLayout(layout) {
+        const classicLayout = document.getElementById('ringGuideClassic');
+        const tabbedLayout = document.getElementById('ringGuideTabs');
+
+        if (classicLayout) {
+            classicLayout.style.display = layout === 'classic' ? 'block' : 'none';
+        }
+        if (tabbedLayout) {
+            tabbedLayout.style.display = layout === 'tabbed' ? 'block' : 'none';
+        }
+
+        localStorage.setItem('ringGuideLayout', layout);
+    },
+
+    /**
+     * Setup tab switching for tabbed layout
+     */
+    setupRingGuideTabs() {
+        const tabs = document.querySelectorAll('.guide-tab');
+        const panels = document.querySelectorAll('.guide-panel');
+
+        if (tabs.length === 0) return;
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const category = tab.dataset.category;
+
+                // Update tab states
+                tabs.forEach(t => {
+                    t.classList.remove('active');
+                    t.setAttribute('aria-selected', 'false');
+                });
+                tab.classList.add('active');
+                tab.setAttribute('aria-selected', 'true');
+
+                // Update panel visibility
+                panels.forEach(panel => {
+                    const isTarget = panel.id === `panel-${category}`;
+                    panel.classList.toggle('active', isTarget);
+                    panel.hidden = !isTarget;
+                });
+            });
+
+            // Keyboard navigation
+            tab.addEventListener('keydown', (e) => {
+                const tabList = Array.from(tabs);
+                const currentIndex = tabList.indexOf(tab);
+                let newIndex;
+
+                switch (e.key) {
+                    case 'ArrowLeft':
+                        newIndex = currentIndex === 0 ? tabList.length - 1 : currentIndex - 1;
+                        break;
+                    case 'ArrowRight':
+                        newIndex = currentIndex === tabList.length - 1 ? 0 : currentIndex + 1;
+                        break;
+                    case 'Home':
+                        newIndex = 0;
+                        break;
+                    case 'End':
+                        newIndex = tabList.length - 1;
+                        break;
+                    default:
+                        return;
+                }
+
+                e.preventDefault();
+                tabList[newIndex].click();
+                tabList[newIndex].focus();
+            });
+        });
+    },
+
+    /**
+     * Update tab badges to show selection count per category
+     */
+    updateTabBadges() {
+        const categories = {
+            diamond: ['guideShapes', 'guideShapesTabs'],
+            setting: ['guideSettings', 'guideSettingsTabs'],
+            metal: ['guideMetals', 'guideMetalsTabs'],
+            accents: ['guideAccents', 'guideAccentsTabs']
+        };
+
+        Object.entries(categories).forEach(([category, containerIds]) => {
+            const badge = document.getElementById(`badge-${category}`);
+            if (!badge) return;
+
+            // Count selected chips from either layout (they're synced)
+            let selectedCount = 0;
+            for (const containerId of containerIds) {
+                const container = document.getElementById(containerId);
+                if (container) {
+                    selectedCount = container.querySelectorAll('.guide-chip.selected').length;
+                    if (selectedCount > 0) break;
+                }
+            }
+
+            if (selectedCount > 0) {
+                badge.textContent = selectedCount;
+                badge.classList.add('visible');
+            } else {
+                badge.textContent = '';
+                badge.classList.remove('visible');
+            }
+        });
+    },
+
+    /**
+     * Sync chip selection between Classic and Tabbed layouts
+     */
+    syncChipSelection(term, isSelected) {
+        // Find all chips with this term across both layouts
+        const allChips = document.querySelectorAll('.guide-chip');
+        allChips.forEach(chip => {
+            if (chip.textContent.trim() === term) {
+                chip.classList.toggle('selected', isSelected);
+            }
+        });
     },
 
     /**
@@ -284,9 +457,9 @@ const app = {
         const isSelected = clickedChip?.classList.contains('selected');
 
         // Determine if this category allows multiple selections
-        // Accents (guideAccents) allows multiple, others are mutually exclusive
+        // Accents (guideAccents or guideAccentsTabs) allows multiple, others are mutually exclusive
         const categoryId = categoryContainer?.id;
-        const allowMultiple = categoryId === 'guideAccents';
+        const allowMultiple = categoryId === 'guideAccents' || categoryId === 'guideAccentsTabs';
 
         // Determine which field is active or visible
         const activeField = refinementInput && refinementInput.offsetParent !== null
@@ -333,10 +506,16 @@ const app = {
             }
         }
 
-        // Toggle selected state on chip
+        // Toggle selected state on clicked chip
         if (clickedChip) {
             clickedChip.classList.toggle('selected');
         }
+
+        // Sync selection across both layouts (Classic and Tabbed)
+        this.syncChipSelection(term, !isSelected);
+
+        // Update tab badges to reflect selection count
+        this.updateTabBadges();
 
         // Show live preview for this term (only when selecting, not deselecting)
         if (!isSelected) {
@@ -742,10 +921,13 @@ const app = {
         if (textarea) textarea.value = '';
         if (charCount) charCount.textContent = '0';
 
-        // Clear any selected chips
+        // Clear any selected chips (from both layouts)
         document.querySelectorAll('.guide-chip.selected').forEach(chip => {
             chip.classList.remove('selected');
         });
+
+        // Reset tab badges
+        this.updateTabBadges();
 
         // Clear reference image
         this.clearReference();
