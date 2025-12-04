@@ -936,7 +936,7 @@ img {
 /* Tab Bar */
 .guide-tab-bar {
     display: flex;
-    justify-content: space-evenly;
+    width: 100%;
     gap: 0.4rem;
     margin-bottom: var(--spacing-md);
     padding: 0.4rem 0.5rem;
@@ -964,7 +964,7 @@ img {
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     white-space: nowrap;
-    flex: 0 0 auto;
+    flex: 1 1 0;
     justify-content: center;
     position: relative;
 }
