@@ -33,8 +33,7 @@ const app = {
         // Setup ring terminology guide with live preview
         this.setupRingGuide();
 
-        // Setup layout toggle and tabbed navigation
-        this.setupLayoutToggle();
+        // Setup tabbed navigation
         this.setupRingGuideTabs();
 
         // Setup file upload handler
@@ -98,94 +97,20 @@ const app = {
             `<button class="guide-chip" onclick="app.insertTerm('${item.name}')" title="${item.desc}">${item.name}</button>`
         ).join('');
 
-        // Populate CLASSIC layout
-        const shapesContainer = document.getElementById('guideShapes');
-        if (shapesContainer && guide.diamondShapes) {
-            shapesContainer.innerHTML = createChips(guide.diamondShapes);
-        }
+        // Populate tabbed layout containers
+        const containers = {
+            guideShapesTabs: guide.diamondShapes,
+            guideSettingsTabs: guide.settings,
+            guideMetalsTabs: guide.metals,
+            guideAccentsTabs: guide.accents
+        };
 
-        const settingsContainer = document.getElementById('guideSettings');
-        if (settingsContainer && guide.settings) {
-            settingsContainer.innerHTML = createChips(guide.settings);
-        }
-
-        const metalsContainer = document.getElementById('guideMetals');
-        if (metalsContainer && guide.metals) {
-            metalsContainer.innerHTML = createChips(guide.metals);
-        }
-
-        const accentsContainer = document.getElementById('guideAccents');
-        if (accentsContainer && guide.accents) {
-            accentsContainer.innerHTML = createChips(guide.accents);
-        }
-
-        // Populate TABBED layout
-        const shapesTabsContainer = document.getElementById('guideShapesTabs');
-        if (shapesTabsContainer && guide.diamondShapes) {
-            shapesTabsContainer.innerHTML = createChips(guide.diamondShapes);
-        }
-
-        const settingsTabsContainer = document.getElementById('guideSettingsTabs');
-        if (settingsTabsContainer && guide.settings) {
-            settingsTabsContainer.innerHTML = createChips(guide.settings);
-        }
-
-        const metalsTabsContainer = document.getElementById('guideMetalsTabs');
-        if (metalsTabsContainer && guide.metals) {
-            metalsTabsContainer.innerHTML = createChips(guide.metals);
-        }
-
-        const accentsTabsContainer = document.getElementById('guideAccentsTabs');
-        if (accentsTabsContainer && guide.accents) {
-            accentsTabsContainer.innerHTML = createChips(guide.accents);
-        }
-    },
-
-    /**
-     * Setup layout toggle between Classic and Tabbed views
-     */
-    setupLayoutToggle() {
-        const toggleContainer = document.getElementById('guideLayoutToggle');
-        if (!toggleContainer) return;
-
-        const buttons = toggleContainer.querySelectorAll('.layout-btn');
-
-        buttons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const layout = btn.dataset.layout;
-                this.setGuideLayout(layout);
-
-                // Update active button
-                buttons.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-            });
+        Object.entries(containers).forEach(([id, items]) => {
+            const container = document.getElementById(id);
+            if (container && items) {
+                container.innerHTML = createChips(items);
+            }
         });
-
-        // Restore saved layout preference
-        const savedLayout = localStorage.getItem('ringGuideLayout') || 'classic';
-        this.setGuideLayout(savedLayout);
-
-        // Update button state
-        buttons.forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.layout === savedLayout);
-        });
-    },
-
-    /**
-     * Switch between Classic and Tabbed layouts
-     */
-    setGuideLayout(layout) {
-        const classicLayout = document.getElementById('ringGuideClassic');
-        const tabbedLayout = document.getElementById('ringGuideTabs');
-
-        if (classicLayout) {
-            classicLayout.style.display = layout === 'classic' ? 'block' : 'none';
-        }
-        if (tabbedLayout) {
-            tabbedLayout.style.display = layout === 'tabbed' ? 'block' : 'none';
-        }
-
-        localStorage.setItem('ringGuideLayout', layout);
     },
 
     /**
@@ -252,28 +177,24 @@ const app = {
      */
     updateTabBadges() {
         const categories = {
-            diamond: ['guideShapes', 'guideShapesTabs'],
-            setting: ['guideSettings', 'guideSettingsTabs'],
-            metal: ['guideMetals', 'guideMetalsTabs'],
-            accents: ['guideAccents', 'guideAccentsTabs']
+            diamond: 'guideShapesTabs',
+            setting: 'guideSettingsTabs',
+            metal: 'guideMetalsTabs',
+            accents: 'guideAccentsTabs'
         };
 
-        Object.entries(categories).forEach(([category, containerIds]) => {
+        Object.entries(categories).forEach(([category, containerId]) => {
             const badge = document.getElementById(`badge-${category}`);
             if (!badge) return;
 
-            // Count selected chips from either layout (they're synced)
-            let selectedCount = 0;
-            for (const containerId of containerIds) {
-                const container = document.getElementById(containerId);
-                if (container) {
-                    selectedCount = container.querySelectorAll('.guide-chip.selected').length;
-                    if (selectedCount > 0) break;
-                }
-            }
+            const container = document.getElementById(containerId);
+            const selectedCount = container ?
+                container.querySelectorAll('.guide-chip.selected').length : 0;
 
+            // For diamond/setting/metal: max 1, so just show checkmark or hide
+            // For accents: can be multiple, show count
             if (selectedCount > 0) {
-                badge.textContent = selectedCount;
+                badge.textContent = category === 'accents' ? selectedCount : '✓';
                 badge.classList.add('visible');
             } else {
                 badge.textContent = '';
@@ -283,10 +204,10 @@ const app = {
     },
 
     /**
-     * Sync chip selection between Classic and Tabbed layouts
+     * Update chip selection state
      */
     syncChipSelection(term, isSelected) {
-        // Find all chips with this term across both layouts
+        // Find all chips with this term and update selection state
         const allChips = document.querySelectorAll('.guide-chip');
         allChips.forEach(chip => {
             if (chip.textContent.trim() === term) {

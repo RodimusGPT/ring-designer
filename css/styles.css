@@ -883,212 +883,33 @@ img {
 }
 
 /* ========================================
-   Inline Ring Guide - Lilly Pulitzer Style
+   Guide Chip Base Styles
    ======================================== */
-.inline-ring-guide {
-    background: linear-gradient(135deg,
-        rgba(255, 255, 255, 0.9),
-        rgba(252, 142, 172, 0.15),
-        rgba(0, 206, 209, 0.1));
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-md);
-    margin-bottom: var(--spacing-lg);
-    border: 2px solid var(--flamingo);
-    position: relative;
-    overflow: hidden;
-}
-
-.inline-ring-guide::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg,
-        var(--hot-pink),
-        var(--coral),
-        var(--sunny-gold),
-        var(--turquoise),
-        var(--palm-green));
-}
-
-.guide-intro {
-    font-size: 0.9rem;
-    color: var(--hot-pink);
-    font-weight: 700;
-    margin-bottom: var(--spacing-sm);
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.guide-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.75rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 2px dotted rgba(252, 142, 172, 0.3);
-}
-
-.guide-row:last-child {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    border-bottom: none;
-}
-
-.guide-label {
-    font-size: 0.7rem;
-    font-weight: 700;
-    color: var(--turquoise);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    min-width: 65px;
-    flex-shrink: 0;
-}
-
-.guide-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    flex: 1;
-}
-
 .guide-chip {
-    padding: 0.35rem 0.75rem;
+    padding: 0.4rem 0.85rem;
     background: var(--white);
     border: 2px solid var(--flamingo);
     border-radius: 20px;
-    font-size: 0.7rem;
-    font-weight: 600;
+    font-size: 0.72rem;
+    font-weight: 500;
     color: var(--hot-pink);
     cursor: pointer;
-    transition: all var(--transition);
+    transition: all 0.25s ease;
     white-space: nowrap;
 }
 
 .guide-chip:hover,
 .guide-chip:focus {
-    background: linear-gradient(135deg, var(--hot-pink), var(--coral));
-    color: white !important;
-    border-color: var(--hot-pink);
-    transform: scale(1.08);
-    box-shadow: 0 4px 12px rgba(233, 30, 140, 0.3);
+    transform: scale(1.05);
     outline: none;
 }
 
 .guide-chip:active {
-    transform: scale(0.95);
-    background: linear-gradient(135deg, var(--hot-pink), var(--coral));
-    color: white !important;
-}
-
-/* Selected state - persistent after click */
-.guide-chip.selected {
-    background: linear-gradient(135deg, var(--hot-pink), var(--coral));
-    color: white !important;
-    border-color: var(--hot-pink);
-    box-shadow: 0 2px 8px rgba(233, 30, 140, 0.4);
-}
-
-/* Alternate chip colors by row - Setting */
-.guide-row:nth-child(2) .guide-chip {
-    border-color: var(--coral);
-    color: var(--coral);
-}
-.guide-row:nth-child(2) .guide-chip:hover,
-.guide-row:nth-child(2) .guide-chip:focus,
-.guide-row:nth-child(2) .guide-chip.selected {
-    background: linear-gradient(135deg, var(--coral), var(--flamingo));
-    border-color: var(--coral);
-    color: white !important;
-}
-
-/* Metal */
-.guide-row:nth-child(3) .guide-chip {
-    border-color: var(--turquoise);
-    color: var(--turquoise);
-}
-.guide-row:nth-child(3) .guide-chip:hover,
-.guide-row:nth-child(3) .guide-chip:focus,
-.guide-row:nth-child(3) .guide-chip.selected {
-    background: linear-gradient(135deg, var(--turquoise), var(--ocean-blue));
-    border-color: var(--turquoise);
-    color: white !important;
-}
-
-/* Accents */
-.guide-row:nth-child(4) .guide-chip {
-    border-color: var(--palm-green);
-    color: var(--palm-green);
-}
-.guide-row:nth-child(4) .guide-chip:hover,
-.guide-row:nth-child(4) .guide-chip:focus,
-.guide-row:nth-child(4) .guide-chip.selected {
-    background: linear-gradient(135deg, var(--palm-green), var(--ocean-blue));
-    border-color: var(--palm-green);
-    color: white !important;
-}
-
-/* Row 5 (if used) */
-.guide-row:nth-child(5) .guide-chip {
-    border-color: var(--sunny-gold);
-    color: #B8860B;
-}
-.guide-row:nth-child(5) .guide-chip:hover,
-.guide-row:nth-child(5) .guide-chip:focus,
-.guide-row:nth-child(5) .guide-chip.selected {
-    background: linear-gradient(135deg, var(--sunny-gold), var(--coral));
-    border-color: var(--sunny-gold);
-    color: white !important;
+    transform: scale(0.98);
 }
 
 /* ========================================
-   Layout Toggle (Classic / Tabbed)
-   ======================================== */
-.guide-layout-toggle {
-    display: flex;
-    justify-content: center;
-    gap: 0.15rem;
-    margin-bottom: var(--spacing-sm);
-    padding: 0.2rem;
-    background: rgba(44, 44, 44, 0.06);
-    border-radius: 20px;
-    width: fit-content;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.layout-btn {
-    padding: 0.35rem 0.9rem;
-    border: none;
-    border-radius: 18px;
-    background: transparent;
-    font-family: var(--font-body);
-    font-size: 0.7rem;
-    font-weight: 500;
-    color: rgba(44, 44, 44, 0.6);
-    cursor: pointer;
-    transition: all 0.25s ease;
-    letter-spacing: 0.02em;
-}
-
-.layout-btn:hover {
-    color: var(--charcoal);
-    background: rgba(255, 255, 255, 0.5);
-}
-
-.layout-btn.active {
-    background: white;
-    color: var(--hot-pink);
-    font-weight: 600;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-/* ========================================
-   Ring Guide Tabs (Tabbed Layout)
+   Ring Guide Tabs
    ======================================== */
 .ring-guide-tabs {
     background: rgba(255, 255, 255, 0.85);
@@ -2705,39 +2526,10 @@ img {
         min-height: 100px;
     }
 
-    /* Inline Ring Guide - Mobile */
-    .inline-ring-guide {
-        padding: var(--spacing-sm);
-        margin-bottom: var(--spacing-md);
-    }
-
-    .guide-intro {
-        font-size: 0.75rem;
-        letter-spacing: 0.5px;
-    }
-
-    .guide-row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.4rem;
-        margin-bottom: 0.6rem;
-        padding-bottom: 0.6rem;
-    }
-
-    .guide-label {
-        min-width: auto;
-        margin-bottom: 0.15rem;
-        font-size: 0.65rem;
-    }
-
-    .guide-chips {
-        gap: 0.3rem;
-    }
-
+    /* Guide Chip - Mobile */
     .guide-chip {
-        font-size: 0.65rem;
-        padding: 0.3rem 0.6rem;
-        border-width: 1.5px;
+        font-size: 0.68rem;
+        padding: 0.35rem 0.7rem;
     }
 
     /* Example Prompts - Mobile */
