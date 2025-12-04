@@ -27,6 +27,9 @@ const app = {
     async init() {
         console.log('💎 Maria\'s Ring Designer initialized');
 
+        // Initialize landing version from saved preference
+        this.initLandingVersion();
+
         // Setup ring terminology guide with live preview
         this.setupRingGuide();
 
@@ -633,6 +636,43 @@ const app = {
             this.showScreen('designerScreen');
         } else {
             this.showScreen('landingScreen');
+        }
+    },
+
+    /**
+     * Switch between landing page versions (A/B comparison)
+     */
+    switchLandingVersion(version) {
+        // Update version buttons
+        const buttons = document.querySelectorAll('.version-btn');
+        buttons.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.version === version);
+        });
+
+        // Update version containers
+        const versionA = document.getElementById('landingVersionA');
+        const versionB = document.getElementById('landingVersionB');
+
+        if (version === 'a') {
+            versionA?.classList.add('active');
+            versionB?.classList.remove('active');
+        } else {
+            versionA?.classList.remove('active');
+            versionB?.classList.add('active');
+        }
+
+        // Save preference to localStorage
+        localStorage.setItem('landing_version', version);
+        console.log(`💎 Switched to landing version: ${version.toUpperCase()}`);
+    },
+
+    /**
+     * Initialize landing version from saved preference
+     */
+    initLandingVersion() {
+        const savedVersion = localStorage.getItem('landing_version');
+        if (savedVersion) {
+            this.switchLandingVersion(savedVersion);
         }
     },
 
