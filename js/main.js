@@ -27,9 +27,6 @@ const app = {
     async init() {
         console.log('💎 Maria\'s Ring Designer initialized');
 
-        // Setup text area character counter
-        this.setupCharCounter();
-
         // Setup ring terminology guide with live preview
         this.setupRingGuide();
 
@@ -464,11 +461,6 @@ const app = {
             }
 
             activeField.focus();
-
-            // Update char counter if textarea
-            if (activeField === textarea) {
-                document.getElementById('charCount').textContent = activeField.value.length;
-            }
         }
 
         // Toggle selected state on clicked chip
@@ -645,27 +637,12 @@ const app = {
     },
 
     /**
-     * Setup character counter for textarea
-     */
-    setupCharCounter() {
-        const textarea = document.getElementById('ringDescription');
-        const charCount = document.getElementById('charCount');
-
-        if (textarea && charCount) {
-            textarea.addEventListener('input', () => {
-                charCount.textContent = textarea.value.length;
-            });
-        }
-    },
-
-    /**
      * Fill textarea with example prompt
      */
     fillExample(index) {
         const textarea = document.getElementById('ringDescription');
         if (textarea && CONFIG.EXAMPLE_PROMPTS[index]) {
             textarea.value = CONFIG.EXAMPLE_PROMPTS[index];
-            document.getElementById('charCount').textContent = textarea.value.length;
         }
     },
 
@@ -939,9 +916,7 @@ const app = {
 
         // Reset form
         const textarea = document.getElementById('ringDescription');
-        const charCount = document.getElementById('charCount');
         if (textarea) textarea.value = '';
-        if (charCount) charCount.textContent = '0';
 
         // Clear any selected chips (from both layouts)
         document.querySelectorAll('.guide-chip.selected').forEach(chip => {
