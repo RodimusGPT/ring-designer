@@ -3439,12 +3439,13 @@ img {
 /* Generate Section */
 .generate-section {
     text-align: center;
-    padding: var(--spacing-md) 0;
+    margin: var(--spacing-md) 0;
 }
 
 .btn-generate {
-    padding: 1rem 2.5rem;
-    font-size: 1.1rem;
+    width: 100%;
+    padding: 1rem 2rem;
+    font-size: 1.05rem;
 }
 
 .generate-hint {
