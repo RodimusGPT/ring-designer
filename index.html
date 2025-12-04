@@ -24,113 +24,20 @@
 
     <!-- Screen 1: Landing Page -->
     <section id="landingScreen" class="screen active">
-        <!-- Version Toggle -->
-        <div class="landing-version-toggle">
-            <button class="version-btn active" data-version="a" onclick="app.switchLandingVersion('a')">
-                <span class="version-icon">🌺</span> Classic
-            </button>
-            <button class="version-btn" data-version="b" onclick="app.switchLandingVersion('b')">
-                <span class="version-icon">🌴</span> Resort
-            </button>
-            <button class="version-btn" data-version="c" onclick="app.switchLandingVersion('c')">
-                <span class="version-icon">🎨</span> AI Art
-            </button>
-        </div>
-
-        <!-- Version A: Classic (Current) -->
-        <div class="landing-version landing-version-a active" id="landingVersionA">
-            <div class="container">
-                <div class="landing-content">
-                    <h1 class="landing-title fade-in">Maria</h1>
-                    <p class="landing-subtitle fade-in-delay">Design Your Forever Ring</p>
-                    <p class="landing-description fade-in-delay-2">
-                        This moment is yours to create something as unique and beautiful as our love.
-                        Choose a design that speaks to your heart, or dream up something entirely your own.
-                    </p>
-                    <button class="btn btn-primary fade-in-delay-3" onclick="app.showScreen('designerScreen')">
-                        Begin Your Journey
-                    </button>
-                </div>
-            </div>
-            <div class="landing-particles"></div>
-        </div>
-
-        <!-- Version B: Resort (Alternative) -->
-        <div class="landing-version landing-version-b" id="landingVersionB">
-            <div class="resort-layout">
-                <!-- Decorative Side Panel -->
-                <div class="resort-side-panel">
-                    <div class="palm-pattern"></div>
-                    <div class="side-accent top">🐚</div>
-                    <div class="side-accent middle">💎</div>
-                    <div class="side-accent bottom">🌺</div>
-                </div>
-
-                <!-- Main Content Card -->
-                <div class="resort-main">
-                    <div class="resort-card">
-                        <div class="resort-card-border"></div>
-                        <div class="resort-card-content">
-                            <span class="resort-eyebrow">✨ A Love Story ✨</span>
-                            <h1 class="resort-title">Maria</h1>
-                            <div class="resort-divider">
-                                <span class="divider-leaf">🌿</span>
-                                <span class="divider-diamond">💍</span>
-                                <span class="divider-leaf">🌿</span>
-                            </div>
-                            <p class="resort-tagline">Design Your Forever Ring</p>
-                            <p class="resort-description">
-                                Create something as unique and beautiful as our love.
-                                Your perfect ring awaits.
-                            </p>
-                            <button class="btn btn-resort" onclick="app.showScreen('designerScreen')">
-                                Begin Your Journey
-                                <span class="btn-arrow">→</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Bottom Decorative Elements -->
-                    <div class="resort-footer-accents">
-                        <span>🌴</span>
-                        <span>🌸</span>
-                        <span>🌊</span>
-                    </div>
-                </div>
+        <div class="container">
+            <div class="landing-content">
+                <h1 class="landing-title fade-in">Maria</h1>
+                <p class="landing-subtitle fade-in-delay">Design Your Forever Ring</p>
+                <p class="landing-description fade-in-delay-2">
+                    This moment is yours to create something as unique and beautiful as our love.
+                    Choose a design that speaks to your heart, or dream up something entirely your own.
+                </p>
+                <button class="btn btn-primary fade-in-delay-3" onclick="app.showScreen('designerScreen')">
+                    Begin Your Journey
+                </button>
             </div>
         </div>
-
-        <!-- Version C: AI Art (Generated Lilly Pulitzer Background) -->
-        <div class="landing-version landing-version-c" id="landingVersionC">
-            <div class="ai-art-bg" id="aiArtBg">
-                <!-- AI-generated background will be set here -->
-                <div class="ai-art-loading" id="aiArtLoading">
-                    <div class="ai-art-spinner"></div>
-                    <p>Creating your tropical paradise...</p>
-                </div>
-            </div>
-            <div class="ai-art-overlay"></div>
-            <div class="ai-art-content">
-                <div class="ai-art-card">
-                    <h1 class="ai-art-title">Maria</h1>
-                    <p class="ai-art-tagline">Design Your Forever Ring</p>
-                    <div class="ai-art-separator">
-                        <span>✦</span>
-                        <span>💍</span>
-                        <span>✦</span>
-                    </div>
-                    <p class="ai-art-description">
-                        Create something as unique and beautiful as our love.
-                    </p>
-                    <button class="btn btn-ai-art" onclick="app.showScreen('designerScreen')">
-                        Begin Your Journey
-                    </button>
-                    <button class="btn-regenerate" onclick="app.regenerateLandingBg()" title="Generate new background">
-                        🎨 New Art
-                    </button>
-                </div>
-            </div>
-        </div>
+        <div class="landing-particles"></div>
     </section>
 
     <!-- Screen 2: AI Designer with Live Preview -->
