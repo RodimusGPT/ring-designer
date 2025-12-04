@@ -710,7 +710,7 @@ img {
     font-size: 0.85rem;
     color: #999;
     margin-top: var(--spacing-xs);
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-xs);
 }
 
 /* ========================================
@@ -3439,7 +3439,7 @@ img {
 /* Generate Section */
 .generate-section {
     text-align: center;
-    margin: var(--spacing-md) 0;
+    margin: var(--spacing-sm) 0;
 }
 
 .btn-generate {
