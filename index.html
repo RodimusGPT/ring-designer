@@ -14,6 +14,32 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+    <!-- Passcode Gate -->
+    <div id="passcodeGate" class="passcode-gate">
+        <div class="passcode-content">
+            <div class="passcode-icon">💍</div>
+            <h1 class="passcode-title">A Secret Awaits</h1>
+            <p class="passcode-subtitle">Enter the code to continue</p>
+            <div class="passcode-input-container">
+                <input
+                    type="tel"
+                    id="passcodeInput"
+                    class="passcode-input"
+                    maxlength="3"
+                    placeholder="•••"
+                    autocomplete="off"
+                    inputmode="numeric"
+                >
+                <div class="passcode-hint">Hint: How much do I love you?</div>
+            </div>
+            <button class="btn btn-passcode" onclick="checkPasscode()">
+                Enter
+            </button>
+            <p id="passcodeError" class="passcode-error"></p>
+        </div>
+        <div class="passcode-particles"></div>
+    </div>
+
     <!-- Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay hidden">
         <div class="loading-content">
@@ -289,6 +315,54 @@
             </div>
         </div>
     </section>
+
+    <!-- Passcode Gate Script -->
+    <script>
+        const PASSCODE = '143';
+        const STORAGE_KEY = 'ring_access_granted';
+
+        // Check if already authenticated
+        function checkAccess() {
+            if (localStorage.getItem(STORAGE_KEY) === 'true') {
+                document.getElementById('passcodeGate').classList.add('hidden');
+            }
+        }
+
+        // Verify passcode
+        function checkPasscode() {
+            const input = document.getElementById('passcodeInput');
+            const error = document.getElementById('passcodeError');
+            const gate = document.getElementById('passcodeGate');
+
+            if (input.value === PASSCODE) {
+                localStorage.setItem(STORAGE_KEY, 'true');
+                gate.classList.add('hidden');
+                error.textContent = '';
+            } else {
+                error.textContent = 'Not quite... try again 💕';
+                input.value = '';
+                input.focus();
+            }
+        }
+
+        // Handle Enter key
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAccess();
+
+            const input = document.getElementById('passcodeInput');
+            if (input) {
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        checkPasscode();
+                    }
+                });
+                // Auto-focus if gate is visible
+                if (!document.getElementById('passcodeGate').classList.contains('hidden')) {
+                    input.focus();
+                }
+            }
+        });
+    </script>
 
     <!-- Scripts -->
     <script src="config.js"></script>

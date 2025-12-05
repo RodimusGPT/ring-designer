@@ -113,6 +113,174 @@ img {
 }
 
 /* ========================================
+   Passcode Gate
+   ======================================== */
+.passcode-gate {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--soft-pink) 0%, #fff 50%, var(--papaya) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.passcode-gate.hidden {
+    opacity: 0;
+    transform: scale(1.1);
+    pointer-events: none;
+}
+
+.passcode-content {
+    text-align: center;
+    padding: var(--spacing-xl);
+    max-width: 400px;
+    width: 90%;
+}
+
+.passcode-icon {
+    font-size: 4rem;
+    margin-bottom: var(--spacing-md);
+    animation: gentlePulse 2s ease-in-out infinite;
+}
+
+@keyframes gentlePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.passcode-title {
+    font-family: var(--font-heading);
+    font-size: 2.5rem;
+    color: var(--charcoal);
+    margin-bottom: var(--spacing-sm);
+    background: linear-gradient(135deg, var(--hot-pink), var(--coral));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.passcode-subtitle {
+    color: #666;
+    font-size: 1.1rem;
+    margin-bottom: var(--spacing-lg);
+}
+
+.passcode-input-container {
+    margin-bottom: var(--spacing-lg);
+}
+
+.passcode-input {
+    width: 140px;
+    height: 60px;
+    font-size: 2rem;
+    text-align: center;
+    letter-spacing: 0.5rem;
+    border: 2px solid var(--flamingo);
+    border-radius: var(--radius-md);
+    background: var(--white);
+    color: var(--charcoal);
+    font-family: var(--font-body);
+    transition: var(--transition);
+    outline: none;
+}
+
+.passcode-input:focus {
+    border-color: var(--hot-pink);
+    box-shadow: 0 0 0 4px rgba(233, 30, 140, 0.15);
+}
+
+.passcode-input::placeholder {
+    color: #ccc;
+    letter-spacing: 0.3rem;
+}
+
+.passcode-hint {
+    margin-top: var(--spacing-sm);
+    font-size: 0.85rem;
+    color: var(--hot-pink);
+    font-style: italic;
+}
+
+.btn-passcode {
+    background: linear-gradient(135deg, var(--hot-pink), var(--coral));
+    color: var(--white);
+    padding: var(--spacing-sm) var(--spacing-xl);
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+    transition: var(--transition);
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+}
+
+.btn-passcode:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-passcode:active {
+    transform: translateY(0);
+}
+
+.passcode-error {
+    margin-top: var(--spacing-md);
+    color: var(--error);
+    font-size: 0.9rem;
+    min-height: 1.5rem;
+    animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+}
+
+.passcode-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: -1;
+}
+
+.passcode-particles::before,
+.passcode-particles::after {
+    content: '💕';
+    position: absolute;
+    font-size: 2rem;
+    opacity: 0.15;
+    animation: floatParticle 15s linear infinite;
+}
+
+.passcode-particles::before {
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.passcode-particles::after {
+    content: '✨';
+    right: 15%;
+    animation-delay: 7s;
+}
+
+@keyframes floatParticle {
+    0% { top: 100%; opacity: 0; }
+    10% { opacity: 0.15; }
+    90% { opacity: 0.15; }
+    100% { top: -10%; opacity: 0; }
+}
+
+/* ========================================
    Loading Overlay - Lilly Pulitzer Style
    ======================================== */
 .loading-overlay {
