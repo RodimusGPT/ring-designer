@@ -8,12 +8,34 @@ const PORT = process.env.PORT || 3001;
 
 // Environment variables (set these in Render dashboard)
 const FAL_API_KEY = process.env.FAL_API_KEY;
-const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'https://rodimusgpt.github.io';
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || process.env.ALLOWED_ORIGIN || '')
+    .split(',')
+    .map(o => o.trim())
+    .filter(Boolean);
+
+// Default allowed origins
+const DEFAULT_ORIGINS = [
+    'https://ringformaria.love',
+    'https://www.ringformaria.love',
+    'https://rodimusgpt.github.io'
+];
+
+const ALL_ALLOWED_ORIGINS = [...new Set([...ALLOWED_ORIGINS, ...DEFAULT_ORIGINS])];
 
 // Middleware
 app.use(express.json());
 app.use(cors({
-    origin: ALLOWED_ORIGIN,
+    origin: function (origin, callback) {
+        // Allow requests with no origin (mobile apps, curl, etc.)
+        if (!origin) return callback(null, true);
+
+        if (ALL_ALLOWED_ORIGINS.includes(origin)) {
+            callback(null, true);
+        } else {
+            console.warn(`CORS blocked origin: ${origin}`);
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     methods: ['POST', 'GET'],
 }));
 
@@ -578,6 +600,6 @@ app.post('/api/import-ring', async (req, res) => {
 // Start server
 app.listen(PORT, () => {
     console.log(`💍 Ring Designer API running on port ${PORT}`);
-    console.log(`   Allowed origin: ${ALLOWED_ORIGIN}`);
+    console.log(`   Allowed origins: ${ALL_ALLOWED_ORIGINS.join(', ')}`);
     console.log(`   FAL_API_KEY: ${FAL_API_KEY ? '✅ configured' : '❌ missing'}`);
 });
