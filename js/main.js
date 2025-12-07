@@ -1016,9 +1016,11 @@ const app = {
         // Hide design flow, show conversation mode
         const designFlow = document.getElementById('designFlow');
         const conversationMode = document.getElementById('conversationMode');
+        const previewActions = document.getElementById('previewActions');
 
         if (designFlow) designFlow.style.display = 'none';
         if (conversationMode) conversationMode.style.display = 'block';
+        if (previewActions) previewActions.style.display = 'flex';
 
         // Update the main preview to show current design
         if (this.currentDesign) {
@@ -1140,10 +1142,12 @@ const app = {
         const designFlow = document.getElementById('designFlow');
         const conversationMode = document.getElementById('conversationMode');
         const conversationHistory = document.getElementById('conversationHistory');
+        const previewActions = document.getElementById('previewActions');
 
         if (designFlow) designFlow.style.display = 'block';
         if (conversationMode) conversationMode.style.display = 'none';
         if (conversationHistory) conversationHistory.innerHTML = '';
+        if (previewActions) previewActions.style.display = 'none';
 
         // Reset form
         const textarea = document.getElementById('ringDescription');

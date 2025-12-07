@@ -86,6 +86,15 @@
                         </div>
                         <div class="preview-caption" id="previewCaption"></div>
                     </div>
+                    <!-- Preview Action Buttons (shown after first generation) -->
+                    <div class="preview-actions" id="previewActions" style="display: none;">
+                        <button class="btn btn-love" onclick="app.selectCurrentDesign()">
+                            I Love This! 💕
+                        </button>
+                        <button class="btn btn-save" onclick="app.saveCurrentToCollection()">
+                            Save 💎
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Unified Design Form Panel -->
@@ -224,12 +233,6 @@
                                 </button>
                             </div>
                             <div class="refinement-actions">
-                                <button class="btn btn-secondary" onclick="app.selectCurrentDesign()">
-                                    I Love This! 💕
-                                </button>
-                                <button class="btn btn-save-collection" onclick="app.saveCurrentToCollection()">
-                                    Save to Collection 💎
-                                </button>
                                 <button class="btn-reset" onclick="app.startOver()">
                                     Start Over
                                 </button>
