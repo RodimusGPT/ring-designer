@@ -1345,6 +1345,7 @@ const app = {
         grid.innerHTML = this.savedRings.map(ring => `
             <div class="collection-card ${ring.isTheOne ? 'is-the-one' : ''}" data-ring-id="${ring.id}">
                 <div class="collection-card-image">
+                    <button class="btn-delete-overlay" onclick="app.removeFromCollection('${ring.id}')" title="Remove">🗑️</button>
                     <img src="${ring.imageUrl}" alt="Saved ring" loading="lazy">
                     ${ring.isTheOne ? '<div class="the-one-badge">💕 The One</div>' : ''}
                 </div>
@@ -1362,9 +1363,6 @@ const app = {
                             💕 The One
                         </button>
                     `}
-                    <button class="btn-remove" onclick="app.removeFromCollection('${ring.id}')" title="Remove from collection">
-                        🗑️
-                    </button>
                 </div>
             </div>
         `).join('');
