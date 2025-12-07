@@ -1483,8 +1483,6 @@ const app = {
      * Mark a ring as "The One"
      */
     async markAsTheOne(ringId) {
-        this.showLoading(true);
-
         try {
             const result = await FirebaseClient.markAsTheOne(ringId);
 
@@ -1498,8 +1496,6 @@ const app = {
         } catch (error) {
             console.error('Mark as The One failed:', error);
             alert('Could not mark ring. Please try again.');
-        } finally {
-            this.showLoading(false);
         }
     },
 
@@ -1507,8 +1503,6 @@ const app = {
      * Unmark a ring as "The One"
      */
     async unmarkAsTheOne(ringId) {
-        this.showLoading(true);
-
         try {
             const result = await FirebaseClient.unmarkAsTheOne(ringId);
 
@@ -1522,8 +1516,6 @@ const app = {
         } catch (error) {
             console.error('Unmark failed:', error);
             alert('Could not unmark ring. Please try again.');
-        } finally {
-            this.showLoading(false);
         }
     },
 
