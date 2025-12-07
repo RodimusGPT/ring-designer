@@ -1631,16 +1631,16 @@ img {
 }
 
 .preview-caption {
-    margin-top: var(--spacing-md);
-    padding: var(--spacing-sm) var(--spacing-md);
-    background: linear-gradient(135deg, var(--hot-pink), var(--coral));
-    color: white;
+    margin-top: var(--spacing-sm);
+    padding: var(--spacing-xs) 0;
+    background: transparent;
+    color: var(--charcoal);
+    opacity: 0.6;
     text-align: center;
-    border-radius: var(--radius-md);
-    font-size: 0.9rem;
-    font-weight: 600;
+    font-size: 0.8rem;
+    font-weight: 500;
     display: none;
-    animation: captionSlide 0.3s ease;
+    letter-spacing: 0.5px;
 }
 
 @keyframes captionSlide {
@@ -3330,8 +3330,8 @@ img {
     }
 
     .preview-caption {
-        font-size: 0.8rem;
-        padding: var(--spacing-xs) var(--spacing-sm);
+        font-size: 0.75rem;
+        padding: var(--spacing-xs) 0;
     }
 
     .designer-form label {
